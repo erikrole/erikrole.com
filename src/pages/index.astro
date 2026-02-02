@@ -14,6 +14,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+
+    <script is:inline>
+        // Run BEFORE page renders to prevent flash
+        const theme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (theme === 'dark' || (!theme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -29,36 +40,18 @@
             --border: #e0e0e0;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #2a2a2a;
-                --text: #f5f5f5;
-                --text-secondary: #b0b0b0;
-                --border: #444;
-            }
-        }
-
-        /* Fallback for data-theme attribute */
-        [data-theme='dark'] {
+        .dark {
             --bg: #2a2a2a;
             --text: #f5f5f5;
             --text-secondary: #b0b0b0;
             --border: #444;
         }
 
-        [data-theme='light'] .logo-light {
-            display: block;
-        }
-
-        [data-theme='light'] .logo-dark {
+        .dark .logo-light {
             display: none;
         }
 
-        [data-theme='dark'] .logo-light {
-            display: none;
-        }
-
-        [data-theme='dark'] .logo-dark {
+        .dark .logo-dark {
             display: block;
         }
 
@@ -86,7 +79,7 @@
         /* Profile Section */
         .profile {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         .profile-photo {
@@ -129,7 +122,7 @@
             font-size: 15px;
             line-height: 1.6;
             color: var(--text);
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             text-align: center;
             max-width: 520px;
             margin-left: auto;
@@ -141,7 +134,7 @@
             display: flex;
             gap: 20px;
             justify-content: center;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         .social-link {
@@ -163,7 +156,7 @@
 
         /* Resume Section */
         .resume {
-            margin-top: 48px;
+            margin-top: 32px;
         }
 
         .experience-item {
@@ -345,23 +338,19 @@
     </div>
 
     <footer>
-        © 2026 Erik Role
+        © <span id="year"></span> Erik Role
     </footer>
 
     <script>
-        // Force dark mode detection on load
-        function setTheme() {
-            const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        }
-
-        // Set theme immediately
-        setTheme();
+        // Set current year
+        document.getElementById('year').textContent = new Date().getFullYear();
 
         // Listen for system theme changes
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
-        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.classList.toggle('dark', e.matches);
+            }
+        });
     </script>
 </body>
 </html>
