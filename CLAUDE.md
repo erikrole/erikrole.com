@@ -258,10 +258,19 @@ A `.claudeignore` file excludes unnecessary files from Claude's context:
 
 **Impact**: Faster operations, reduced token usage, better performance
 
+### .gitignore
+A `.gitignore` file prevents build artifacts from being committed to version control:
+- `dist/`, `.astro/` - Build output (regenerated on deploy)
+- `node_modules/` - Dependencies (installed via package.json)
+- `.DS_Store`, logs, cache files - Temporary files
+- `.env` files - Environment variables
+
+**Impact**: Cleaner git history, smaller repo size, no repeated build artifact commits
+
 ### Pre-commit Hook
 A pre-commit hook (`.git/hooks/pre-commit`) automatically runs `npm run build` before every commit to catch errors early.
 
-**Impact**: Prevents broken deployments, validates changes before they reach the repo
+**Impact**: Prevents broken deployments, validates changes before they reach the repo. Build output is validated but not committed (excluded by .gitignore).
 
 ## Development Workflow
 
