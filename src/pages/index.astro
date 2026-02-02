@@ -17,12 +17,19 @@
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
+        console.log('🌙 Dark mode script running');
         const theme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        console.log('📦 localStorage theme:', theme);
+        console.log('🎨 prefers-color-scheme: dark?', prefersDark);
 
         if (theme === 'dark' || (!theme && prefersDark)) {
             document.documentElement.classList.add('dark');
+            console.log('✅ Dark class added to <html>');
+        } else {
+            console.log('❌ Dark class NOT added (using light mode)');
         }
+        console.log('🏷️ HTML element classes:', document.documentElement.className);
     </script>
 
     <style>
