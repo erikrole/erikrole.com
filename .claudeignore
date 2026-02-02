@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+.astro/
+
+# Cache and temp files
+.DS_Store
+*.log
+.cache/
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/

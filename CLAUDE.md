@@ -16,14 +16,33 @@ Personal landing page for Erik Role built with the Clay Astro theme. This is a m
 - **Styling**: PostCSS with CSS custom properties (CSS variables)
 - **Content**: Astro Content Collections (Markdown/MDX)
 - **TypeScript**: Strict mode enabled
-- **Deployment**: Configured for Netlify (works with any static host)
+- **Deployment**: Cloudflare Pages (wrangler.toml)
+- **Font**: Abril Fatface (Google Fonts) for headings
 
 ---
+
+## Current Implementation
+
+**IMPORTANT**: The homepage (`src/pages/index.astro`) has been completely rebuilt as a **single-page landing site**. It does NOT use the Clay theme components or templates. The design is minimal, clean, and focused solely on Erik's professional identity.
+
+**Homepage Features**:
+- Profile photo with hover bounce effect
+- Name and current title
+- Professional bio summary
+- Icon-only social links (Instagram, X, LinkedIn, Email)
+- Compact resume section with company logos
+- Auto-updating copyright year in footer
+- Adaptive B1G Network logo (black/white based on theme)
+- System-responsive dark mode (⚠️ currently troubleshooting)
+
+**Other pages** (bio, work, news, sold, contact, elements) still use the original Clay theme structure but are not linked from the homepage.
 
 ## Project Structure
 
 ```
 /
+├── .claudeignore               # Files excluded from Claude context
+├── .git/hooks/pre-commit       # Build validation before commits
 ├── public/                     # Static assets
 │   ├── img/                    # Images (reference as /img/filename.jpg)
 │   ├── favicon.svg/ico         # Site icons
@@ -120,34 +139,37 @@ The `templateKey` field determines which template renders the content:
 
 ## Styling System
 
-### CSS Variables
-All colors, fonts, and spacing defined in `src/styles/vars.css`:
+### CSS Variables (Homepage Only)
+The homepage uses inline CSS variables (not `src/styles/vars.css`). All styles defined in `src/pages/index.astro`:
 
 ```css
-/* Primary colors */
---color-primary: #3eb0ef          /* Brand color (light mode) */
---color-base: #131313             /* Text color (light mode) */
---color-bg: #ffffff               /* Background (light mode) */
+:root {
+    color-scheme: light dark;
+    --bg: #f5f4f0;              /* Cream background */
+    --text: #1a1a1a;            /* Dark text */
+    --text-secondary: #666;     /* Gray for subtitles */
+    --border: #e0e0e0;          /* Light gray borders */
+}
 
-/* Fonts */
---font-sans-serif: 'Futura', ...  /* Headers, navigation */
---font-serif: 'EB Garamond', ...  /* Body text */
-
-/* Dark mode */
-[data-theme='dark'] {
-  --color-primary: #5ec2ff
-  --color-base: #e0e0e0
-  --color-bg: #121212
+html.dark {
+    color-scheme: dark;
+    --bg: #2a2a2a;              /* Charcoal background */
+    --text: #f5f5f5;            /* Light text */
+    --text-secondary: #b0b0b0;  /* Light gray for subtitles */
+    --border: #444;             /* Dark gray borders */
 }
 ```
 
-**To customize colors/fonts**: Edit `src/styles/vars.css`
+**Font**: Abril Fatface (Google Fonts) for name/headings
+
+**To customize**: Edit the `<style>` section in `src/pages/index.astro`
 
 ### Theme System
-- Light/dark mode toggle in header
-- Preference saved to localStorage
-- Respects `prefers-color-scheme` media query
-- Controlled via `data-theme` attribute on document root
+- NO manual toggle (respects system preference only)
+- Detects `prefers-color-scheme: dark` via JavaScript
+- Adds `.dark` class to `<html>` when dark mode detected
+- CSS uses `html.dark` selector for specificity
+- Theme preference can be saved to localStorage (not currently used)
 
 ---
 
@@ -176,11 +198,31 @@ Defined in `src/components/Footer.astro`
 
 ## Key Features
 
-### Dark Mode
-- Toggle button in header (sun/moon icon)
-- Auto-detects system preference
-- Persists user choice
-- Smooth transitions between themes
+### Dark Mode (⚠️ TROUBLESHOOTING IN PROGRESS)
+**Current Status**: Dark mode detection is NOT working despite multiple implementation attempts.
+
+**Implementation Details** (src/pages/index.astro):
+- Inline script in `<head>` with `is:inline` directive (prevents bundling)
+- Checks `localStorage.getItem('theme')` first
+- Falls back to `window.matchMedia('(prefers-color-scheme: dark)')`
+- Adds `.dark` class to `<html>` element when dark mode detected
+- CSS uses `html.dark` selector to override `:root` variables
+
+**Attempted Fixes**:
+1. `@media (prefers-color-scheme: dark)` with CSS variables - didn't work
+2. JavaScript setting `data-theme` attribute - didn't work
+3. Moved CSS variables from `:root` to `html, body` - didn't work
+4. Added `color-scheme` meta tags - didn't work
+5. Used class-based approach (`.dark`) with inline script - didn't work
+6. Changed to `html.dark` for CSS specificity - **PENDING TEST**
+
+**Debug Results**:
+- ✅ Script executes correctly
+- ✅ `prefers-color-scheme: dark` detects as `true` on Mac/iPhone
+- ✅ `.dark` class successfully added to `<html>` element
+- ❌ CSS variables not being overridden (suspected specificity issue)
+
+**Next Steps**: Need to verify if latest CSS specificity fix (commit f2938fe) resolves the issue
 
 ### Responsive Design
 - Mobile-first approach
@@ -205,6 +247,22 @@ Defined in `src/components/Footer.astro`
 
 ---
 
+## Claude Code Optimizations
+
+### .claudeignore
+A `.claudeignore` file excludes unnecessary files from Claude's context:
+- `node_modules/` - Dependencies
+- `dist/` and `.astro/` - Build artifacts
+- `.DS_Store`, `*.log`, `.cache/` - Temp files
+- `.git/`, `.vscode/`, `.idea/` - Version control and IDE files
+
+**Impact**: Faster operations, reduced token usage, better performance
+
+### Pre-commit Hook
+A pre-commit hook (`.git/hooks/pre-commit`) automatically runs `npm run build` before every commit to catch errors early.
+
+**Impact**: Prevents broken deployments, validates changes before they reach the repo
+
 ## Development Workflow
 
 ### Commands
@@ -214,11 +272,29 @@ npm run build    # Build for production (outputs to dist/)
 npm run preview  # Preview production build locally
 ```
 
+### Deployment
+Site is deployed to **Cloudflare Pages** using Wrangler:
+
+**Configuration** (`wrangler.toml`):
+```toml
+name = "erikrole"
+compatibility_date = "2026-02-01"
+
+[assets]
+directory = "./dist"
+```
+
+**To deploy**:
+1. Build: `npm run build` (creates `dist/` folder)
+2. Deploy via Cloudflare dashboard or CLI
+3. Site URL: erikrole.com
+
 ### Git Workflow
 - **Current branch**: `claude/personal-landing-page-uc2NX`
 - **Main branch**: (to be determined)
 - Always commit and push changes before stopping work
 - Use clear, descriptive commit messages
+- Pre-commit hook automatically validates builds
 
 ### Making Changes
 
@@ -349,26 +425,42 @@ description: "Page description"
 
 ### Build Errors
 - Check TypeScript errors: `npm run build`
+- Pre-commit hook will catch build errors automatically
 - Verify frontmatter matches schema in `content/config.ts`
 - Ensure all image paths are valid
 - Check for missing imports
 
+### Dark Mode Not Working (Current Issue)
+**Symptoms**: Site stays in light mode even when system is set to dark mode
+
+**Debugging steps**:
+1. Open browser console (F12 or Cmd+Option+I)
+2. Check if script runs and detects dark mode preference
+3. Verify `.dark` class is added to `<html>` element (Inspect > Elements)
+4. Check computed styles to see if CSS variables are overridden
+5. Look for CSS specificity conflicts
+
+**Known issues**:
+- CSS specificity with `:root` vs `.dark` selectors
+- Need to use `html.dark` for proper specificity
+- Original Clay theme used manual toggle, NOT system detection
+
 ### Styling Issues
-- Clear browser cache
-- Check CSS variable names in `vars.css`
-- Verify PostCSS is processing correctly
-- Test in both light and dark modes
+- Clear browser cache (Cmd+Shift+R or Ctrl+F5)
+- Check CSS variable names in inline `<style>` (not vars.css for homepage)
+- Verify CSS specificity (use browser DevTools)
+- Test in both light and dark modes on actual Mac/iPhone
+
+### Favicon 404
+- Check file exists in `public/img/`
+- Verify filename matches reference in `<link>` tag
+- Common names: `favicon.ico`, `favicon.svg`, `favicon.png`
 
 ### Content Not Appearing
 - Verify frontmatter is valid YAML
 - Check `templateKey` matches available templates
 - Ensure collection is imported in page routes
-- Check if item needs `pagetype: ['main']` for homepage
-
-### Navigation Issues
-- Verify links in `Header.astro` match actual routes
-- Check that pages exist in `src/content/pages/`
-- Test mobile hamburger menu functionality
+- Note: Homepage is now standalone, doesn't pull from collections
 
 ---
 
@@ -391,27 +483,77 @@ description: "Page description"
 
 ---
 
+## Completed Features
+
+- ✅ Single-page minimal landing design
+- ✅ Profile photo with hover bounce effect
+- ✅ Icon-only social links (Instagram, X, LinkedIn, Email)
+- ✅ Compact resume section with company logos
+- ✅ Auto-updating copyright year
+- ✅ Adaptive B1G Network logo (black/white versions)
+- ✅ Cloudflare Pages deployment
+- ✅ Claude Code optimizations (.claudeignore, pre-commit hook)
+
+## Known Issues
+
+- ❌ Dark mode not responding to system preference (troubleshooting in progress)
+- ⚠️ Favicon 404 error (needs file verification)
+
 ## Future Enhancements
 
 Potential improvements for this personal landing page:
+- [ ] Fix dark mode system preference detection
+- [ ] Add video embed section (YouTube/Vimeo)
+- [ ] Add photo gallery section
+- [ ] Add resume/CV download link (PDF)
 - [ ] Add analytics (Plausible, Fathom, or Google Analytics)
-- [ ] Implement image gallery/lightbox for photos
-- [ ] Add blog/writing section if needed
-- [ ] Integrate YouTube/Vimeo API for video embeds
-- [ ] Add resume/CV download link
 - [ ] Implement OpenGraph tags for better social sharing
 - [ ] Add schema.org structured data for SEO
 - [ ] Create custom 404 page
+- [ ] Add smooth scroll animations
 
 ---
+
+## Lessons Learned
+
+### Dark Mode Implementation
+**Challenge**: Automatic dark mode detection in Astro
+
+**What we learned**:
+- Inline scripts need `is:inline` directive to prevent bundling
+- Script must run in `<head>` before page renders to prevent flash
+- CSS specificity matters: `html.dark` beats `:root` selector
+- `@media (prefers-color-scheme: dark)` can conflict with JS approach
+- Original Clay theme used manual toggle, NOT system detection
+- Browser console debugging reveals script execution but not CSS application issues
+
+**Best practices**:
+- Use `window.matchMedia('(prefers-color-scheme: dark)').matches` for detection
+- Add `.dark` class to `<html>` element, not `<body>`
+- Use higher specificity selectors (`html.dark`) for dark mode overrides
+- Add `color-scheme: dark` to CSS for proper browser rendering
+- Test on actual devices (Mac/iPhone), not just browser DevTools
+
+### Claude Code Optimizations
+**High-impact, low-effort improvements**:
+1. **`.claudeignore`** - Exclude build artifacts and dependencies from context
+2. **Pre-commit hooks** - Validate builds before commits
+3. **Focused documentation** - Keep CLAUDE.md updated with current state
+
+**Performance tips**:
+- Exclude large directories (node_modules, dist, .git) from Claude's context
+- Use pre-commit hooks to catch errors early
+- Document troubleshooting steps for future reference
 
 ## Resources
 
 - **Astro Docs**: https://docs.astro.build
 - **Content Collections**: https://docs.astro.build/en/guides/content-collections/
 - **PostCSS**: https://postcss.org/
-- **Netlify Deploy**: https://docs.netlify.com/
+- **Cloudflare Pages**: https://developers.cloudflare.com/pages/
+- **Wrangler**: https://developers.cloudflare.com/workers/wrangler/
+- **Google Fonts (Abril Fatface)**: https://fonts.google.com/specimen/Abril+Fatface
 
 ---
 
-*Last updated: 2026-02-01*
+*Last updated: 2026-02-02*
