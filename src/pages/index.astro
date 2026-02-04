@@ -158,6 +158,20 @@
         /* Resume Section */
         .resume {
             margin-top: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .resume.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .resume-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
         }
 
         .experience-item {
@@ -224,7 +238,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .container {
-                padding: 30px 20px 60px;
+                padding: 60px 20px 60px;
             }
 
             h1 {
@@ -232,7 +246,7 @@
             }
 
             .title {
-                font-size: 14px;
+                font-size: 13px;
             }
 
             .bio {
@@ -286,13 +300,15 @@
                 </div>
             </div>
 
+            <div class="resume-divider"></div>
+
             <div class="experience-item">
                 <div class="company-logo">
                     <img src="/img/Badgers.png" alt="Wisconsin Badgers" />
                 </div>
                 <div class="experience-details">
                     <div class="job-title">Digital Producer / Wisconsin Badgers</div>
-                    <div class="duration">Jun 2019 – Jun 2025 · 6 yrs</div>
+                    <div class="duration">Jun 2019 – Jun 2025</div>
                 </div>
             </div>
 
@@ -312,7 +328,7 @@
                 </div>
                 <div class="experience-details">
                     <div class="job-title">Videoboard Content Creator / Milwaukee Brewers</div>
-                    <div class="duration">Mar 2018 – Dec 2023 · 5 yrs 10 mos</div>
+                    <div class="duration">Mar 2018 – Dec 2023</div>
                 </div>
             </div>
 
@@ -323,7 +339,7 @@
                 </div>
                 <div class="experience-details">
                     <div class="job-title">Multi-Platform Video Editor / Big Ten Network</div>
-                    <div class="duration">Aug 2018 – May 2019 · 10 mos</div>
+                    <div class="duration">Aug 2018 – May 2019</div>
                 </div>
             </div>
         </div>
@@ -343,6 +359,20 @@
                 document.documentElement.classList.toggle('dark', e.matches);
             }
         });
+
+        // Resume scroll reveal
+        const resume = document.querySelector('.resume');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        if (resume) {
+            observer.observe(resume);
+        }
     </script>
 </body>
 </html>
