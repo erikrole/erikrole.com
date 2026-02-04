@@ -182,6 +182,11 @@
             border-bottom: none;
         }
 
+        /* Remove border from item immediately before divider */
+        .experience-item:has(+ .resume-divider) {
+            border-bottom: none;
+        }
+
         .company-logo {
             width: 36px;
             height: 36px;
@@ -260,23 +265,26 @@
         /* Footer */
         footer {
             text-align: center;
-            padding: 40px 24px;
+            padding: 24px 24px 40px;
             font-size: 13px;
             color: var(--text-secondary);
+            position: sticky;
+            bottom: 0;
+            background: var(--bg);
         }
 
         /* Mobile: Scroll Behavior */
         @media (max-width: 768px) {
             body {
-                min-height: 200vh; /* Allow scrolling */
+                min-height: 100vh;
             }
 
             .container {
-                min-height: 100vh;
+                min-height: calc(100vh - 88px); /* Account for footer height */
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                padding: 60px 20px 60px;
+                padding: 60px 20px 20px;
             }
 
             .profile {
@@ -286,13 +294,11 @@
                 background: var(--bg);
                 padding: 20px 0;
                 margin-bottom: 32px;
-                transition: padding var(--transition-duration) var(--transition-easing),
-                            box-shadow var(--transition-duration) var(--transition-easing);
+                transition: padding var(--transition-duration) var(--transition-easing);
             }
 
             .profile.scrolled {
                 padding: 12px 0;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .profile-photo {
@@ -412,7 +418,7 @@
             <div class="profile-photo">
                 <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role" />
             </div>
-            <h1>Erik Role</h1>
+            <h1>ERIK ROLE</h1>
             <p class="title">Assistant Director of Creative Video / Wisconsin Badgers</p>
         </div>
 
