@@ -1,5 +1,29 @@
 ---
 // Minimal personal site for Erik Role
+const siteUrl = "https://erikrole.com";
+const pageTitle = "Erik Role";
+const pageDescription =
+    "Assistant Director of Creative Video at Wisconsin Badgers";
+const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.jpeg";
+const canonicalUrl = `${siteUrl}/`;
+const socialImageUrl = `${siteUrl}${socialImage}`;
+
+const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Erik Role",
+    url: canonicalUrl,
+    image: socialImageUrl,
+    jobTitle: "Assistant Director of Creative Video",
+    worksFor: {
+        "@type": "SportsOrganization",
+        name: "Wisconsin Badgers",
+    },
+    sameAs: [
+        "https://www.linkedin.com/in/erikrole/",
+        "https://instagram.com/erik_role",
+    ],
+};
 ---
 
 <!DOCTYPE html>
@@ -8,8 +32,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>Erik Role</title>
-    <meta name="description" content="Assistant Director of Creative Video at Wisconsin Badgers">
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription}>
+    <link rel="canonical" href={canonicalUrl}>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={canonicalUrl}>
+    <meta property="og:title" content={pageTitle}>
+    <meta property="og:description" content={pageDescription}>
+    <meta property="og:image" content={socialImageUrl}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={pageTitle}>
+    <meta name="twitter:description" content={pageDescription}>
+    <meta name="twitter:image" content={socialImageUrl}>
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +55,7 @@
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
-        const theme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (theme === 'dark' || (!theme && prefersDark)) {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
     </script>
@@ -533,9 +568,7 @@
 
         // Listen for system theme changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) {
-                document.documentElement.classList.toggle('dark', e.matches);
-            }
+            document.documentElement.classList.toggle('dark', e.matches);
         });
 
         // Mobile scroll behavior
