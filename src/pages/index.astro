@@ -1,5 +1,29 @@
 ---
 // Minimal personal site for Erik Role
+const siteUrl = "https://erikrole.com";
+const pageTitle = "Erik Role";
+const pageDescription =
+    "Assistant Director of Creative Video at Wisconsin Badgers";
+const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.jpeg";
+const canonicalUrl = `${siteUrl}/`;
+const socialImageUrl = `${siteUrl}${socialImage}`;
+
+const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Erik Role",
+    url: canonicalUrl,
+    image: socialImageUrl,
+    jobTitle: "Assistant Director of Creative Video",
+    worksFor: {
+        "@type": "SportsOrganization",
+        name: "Wisconsin Badgers",
+    },
+    sameAs: [
+        "https://www.linkedin.com/in/erikrole/",
+        "https://instagram.com/erik_role",
+    ],
+};
 ---
 
 <!DOCTYPE html>
@@ -8,8 +32,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>Erik Role</title>
-    <meta name="description" content="Assistant Director of Creative Video at Wisconsin Badgers">
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription}>
+    <link rel="canonical" href={canonicalUrl}>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={canonicalUrl}>
+    <meta property="og:title" content={pageTitle}>
+    <meta property="og:description" content={pageDescription}>
+    <meta property="og:image" content={socialImageUrl}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={pageTitle}>
+    <meta name="twitter:description" content={pageDescription}>
+    <meta name="twitter:image" content={socialImageUrl}>
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +55,7 @@
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
-        const theme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (theme === 'dark' || (!theme && prefersDark)) {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
     </script>
@@ -423,7 +458,7 @@
 <body>
     <div class="container">
         <!-- Profile -->
-        <div class="profile">
+        <div id="about" class="profile">
             <div class="profile-photo">
                 <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role" />
             </div>
@@ -438,7 +473,7 @@
                 Specializing in social-first content, in-venue production, and brand strategy.
             </p>
 
-            <div class="social-links">
+            <div id="contact" class="social-links">
                 <a href="mailto:erikrole@gmail.com" class="social-link" aria-label="Email">
                     <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
@@ -455,7 +490,7 @@
         </div>
 
         <!-- Resume Section -->
-        <div class="resume-section">
+        <div id="resume" class="resume-section">
             <div class="resume">
                 <!-- PRESENT ROLES -->
                 <div class="experience-item">
@@ -533,79 +568,67 @@
 
         // Listen for system theme changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) {
-                document.documentElement.classList.toggle('dark', e.matches);
-            }
+            document.documentElement.classList.toggle('dark', e.matches);
         });
 
-        // Mobile scroll behavior
-        let isMobile = window.innerWidth <= 768;
+        const profile = document.querySelector('.profile');
+        const initialContent = document.querySelector('.initial-content');
+        const resumeSection = document.querySelector('.resume-section');
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (isMobile) {
-            const profile = document.querySelector('.profile');
-            const initialContent = document.querySelector('.initial-content');
-            const resumeSection = document.querySelector('.resume-section');
-            const scrollIndicator = document.querySelector('.scroll-indicator');
+        let isMobile = window.matchMedia('(max-width: 768px)').matches;
+        let revealObserver;
 
-            const SCROLL_START = 50;
-            const SCROLL_COMPLETE = 200;
-
-            let scrollTimeout;
-            function handleScroll() {
-                if (!isMobile) return;
-
-                const scrollY = window.scrollY;
-
-                if (scrollY > SCROLL_START) {
-                    profile.classList.add('scrolled');
-                    initialContent.classList.add('hidden');
-                    resumeSection.classList.add('visible');
-                    scrollIndicator.classList.add('hidden');
-                } else {
-                    profile.classList.remove('scrolled');
-                    initialContent.classList.remove('hidden');
-                    resumeSection.classList.remove('visible');
-                    scrollIndicator.classList.remove('hidden');
-                }
-            }
-
-            function throttledScroll() {
-                if (scrollTimeout) return;
-                scrollTimeout = setTimeout(() => {
-                    handleScroll();
-                    scrollTimeout = null;
-                }, 16);
-            }
-
-            window.addEventListener('scroll', throttledScroll, { passive: true });
-
-            // Handle resize
-            window.addEventListener('resize', () => {
-                const wasMobile = isMobile;
-                isMobile = window.innerWidth <= 768;
-
-                if (!isMobile && wasMobile) {
-                    // Switched to desktop - reset
-                    profile.classList.remove('scrolled');
-                    initialContent.classList.remove('hidden');
-                    resumeSection.classList.remove('visible');
-                    scrollIndicator.classList.remove('hidden');
-                } else if (isMobile && !wasMobile) {
-                    // Switched to mobile - evaluate
-                    handleScroll();
-                }
-            });
-
-            // Handle page cache restore
-            window.addEventListener('pageshow', (event) => {
-                if (event.persisted) {
-                    handleScroll();
-                }
-            });
-
-            // Initial call
-            handleScroll();
+        function setResumeVisible(isVisible) {
+            profile.classList.toggle('scrolled', isVisible);
+            initialContent.classList.toggle('hidden', isVisible);
+            resumeSection.classList.toggle('visible', isVisible);
+            scrollIndicator.classList.toggle('hidden', isVisible || !isMobile);
         }
+
+        function setupMobileReveal() {
+            if (revealObserver) {
+                revealObserver.disconnect();
+            }
+
+            if (!isMobile) {
+                setResumeVisible(true);
+                return;
+            }
+
+            setResumeVisible(false);
+
+            const rootMargin = reducedMotion ? '-6% 0px -70% 0px' : '-10% 0px -65% 0px';
+            revealObserver = new IntersectionObserver(
+                ([entry]) => {
+                    setResumeVisible(!entry.isIntersecting);
+                },
+                {
+                    threshold: 0,
+                    rootMargin,
+                },
+            );
+
+            revealObserver.observe(initialContent);
+        }
+
+        function handleViewportChange() {
+            const wasMobile = isMobile;
+            isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+            if (wasMobile !== isMobile) {
+                setupMobileReveal();
+            }
+        }
+
+        window.addEventListener('resize', handleViewportChange, { passive: true });
+        window.addEventListener('orientationchange', handleViewportChange, { passive: true });
+        window.addEventListener('pageshow', () => {
+            setupMobileReveal();
+        });
+
+        setupMobileReveal();
     </script>
 </body>
 </html>
