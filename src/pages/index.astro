@@ -605,7 +605,7 @@ const personSchema = {
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         let isMobile = window.matchMedia('(max-width: 768px)').matches;
-        let revealObserver;
+        let ticking = false;
 
         function setResumeVisible(isVisible) {
             profile.classList.toggle('scrolled', isVisible);
@@ -614,30 +614,33 @@ const personSchema = {
             scrollIndicator.classList.toggle('hidden', isVisible || !isMobile);
         }
 
-        function setupMobileReveal() {
-            if (revealObserver) {
-                revealObserver.disconnect();
-            }
+        function shouldRevealResume() {
+            const scrollRevealOffset = reducedMotion ? 12 : 24;
+            const initialContentBottom = initialContent.getBoundingClientRect().bottom;
+            const viewportTrigger = window.innerHeight * (reducedMotion ? 0.9 : 0.78);
 
+            return window.scrollY > scrollRevealOffset && initialContentBottom <= viewportTrigger;
+        }
+
+        function updateMobileRevealState() {
             if (!isMobile) {
                 setResumeVisible(true);
                 return;
             }
 
-            setResumeVisible(false);
+            setResumeVisible(shouldRevealResume());
+        }
 
-            const rootMargin = reducedMotion ? '-6% 0px -70% 0px' : '-10% 0px -65% 0px';
-            revealObserver = new IntersectionObserver(
-                ([entry]) => {
-                    setResumeVisible(!entry.isIntersecting);
-                },
-                {
-                    threshold: 0,
-                    rootMargin,
-                },
-            );
+        function queueMobileRevealUpdate() {
+            if (ticking) {
+                return;
+            }
 
-            revealObserver.observe(initialContent);
+            ticking = true;
+            requestAnimationFrame(() => {
+                updateMobileRevealState();
+                ticking = false;
+            });
         }
 
         function handleViewportChange() {
@@ -645,17 +648,21 @@ const personSchema = {
             isMobile = window.matchMedia('(max-width: 768px)').matches;
 
             if (wasMobile !== isMobile) {
-                setupMobileReveal();
+                updateMobileRevealState();
+                return;
             }
+
+            queueMobileRevealUpdate();
         }
 
+        window.addEventListener('scroll', queueMobileRevealUpdate, { passive: true });
         window.addEventListener('resize', handleViewportChange, { passive: true });
         window.addEventListener('orientationchange', handleViewportChange, { passive: true });
         window.addEventListener('pageshow', () => {
-            setupMobileReveal();
+            updateMobileRevealState();
         });
 
-        setupMobileReveal();
+        updateMobileRevealState();
     </script>
 </body>
 </html>
