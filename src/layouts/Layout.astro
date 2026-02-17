@@ -3,7 +3,6 @@ import "../styles/vars.css";
 import "../styles/content.css";
 import "../styles/layout.css";
 
-import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
@@ -25,7 +24,6 @@ const { title, description } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>{title || "Clay"}</title>
-        <ClientRouter />
         <script is:inline>
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             if (prefersDark) {
@@ -47,41 +45,25 @@ const { title, description } = Astro.props;
         <Footer />
 
         <script>
-            function initNav() {
-                const burger = document.querySelector(".nav-burger");
-                const wrapper = document.querySelector(".site-wrapper");
-                if (burger && wrapper) {
-                    burger.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        wrapper.classList.toggle("site-head-open");
-                    });
-                }
-            }
+            const colorSchemeQuery = window.matchMedia(
+                "(prefers-color-scheme: dark)",
+            );
 
             function applySystemTheme() {
-                const prefersDark = window.matchMedia(
-                    "(prefers-color-scheme: dark)",
-                ).matches;
-                if (prefersDark) {
+                if (colorSchemeQuery.matches) {
                     document.documentElement.setAttribute("data-theme", "dark");
                 } else {
                     document.documentElement.removeAttribute("data-theme");
                 }
             }
 
-            // Run on view transitions (fires on initial load too)
-            document.addEventListener("astro:page-load", () => {
-                initNav();
-                applySystemTheme();
-            });
+            if (typeof colorSchemeQuery.addEventListener === "function") {
+                colorSchemeQuery.addEventListener("change", applySystemTheme);
+            } else if (typeof colorSchemeQuery.addListener === "function") {
+                colorSchemeQuery.addListener(applySystemTheme);
+            }
 
-            document.addEventListener("astro:after-swap", () => {
-                applySystemTheme();
-            });
-
-            window
-                .matchMedia("(prefers-color-scheme: dark)")
-                .addEventListener("change", applySystemTheme);
+            applySystemTheme();
         </script>
     </body>
 </html>
