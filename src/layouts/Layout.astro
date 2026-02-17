@@ -13,17 +13,36 @@ export interface Props {
 }
 
 const { title, description } = Astro.props;
+const baseTitle = title || "Erik Role";
+const baseDescription =
+    description || "Assistant Director of Creative Video at Wisconsin Badgers";
+const canonicalUrl = Astro.url?.href;
+const socialImageUrl = Astro.site
+    ? new URL("/img/20240731-240731MBB-3329-Role-Edit.jpeg", Astro.site).toString()
+    : "/img/20240731-240731MBB-3329-Role-Edit.jpeg";
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content={description || "Clay Theme"} />
+        <meta name="description" content={baseDescription} />
         <meta name="viewport" content="width=device-width" />
+        <meta name="robots" content="index,follow,max-image-preview:large" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
-        <title>{title || "Clay"}</title>
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        <meta property="og:site_name" content="Erik Role" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={baseTitle} />
+        <meta property="og:description" content={baseDescription} />
+        {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+        <meta property="og:image" content={socialImageUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={baseTitle} />
+        <meta name="twitter:description" content={baseDescription} />
+        <meta name="twitter:image" content={socialImageUrl} />
+        <title>{baseTitle}</title>
         <script is:inline>
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             if (prefersDark) {
