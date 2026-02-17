@@ -50,6 +50,9 @@ const personSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
@@ -472,7 +475,7 @@ const personSchema = {
             </p>
 
             <div id="contact" class="social-links">
-                <a href="mailto:erikrole@gmail.com" class="social-link" aria-label="Email">
+                <a id="email-link" href="#contact" class="social-link" aria-label="Email">
                     <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
                 <a href="https://www.instagram.com/erikrole/" target="_blank" rel="noopener me" class="social-link" aria-label="Instagram">
@@ -563,6 +566,17 @@ const personSchema = {
     <script>
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Basic email obfuscation to reduce static scraping
+        const emailLink = document.getElementById('email-link');
+        if (emailLink) {
+            const localPart = ['erik', 'role'].join('');
+            const domain = ['gmail', 'com'].join('.');
+            const address = `${localPart}@${domain}`;
+
+            emailLink.setAttribute('href', `mailto:${address}`);
+            emailLink.setAttribute('title', address);
+        }
 
         // Listen for system theme changes
         const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
