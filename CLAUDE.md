@@ -198,31 +198,15 @@ Defined in `src/components/Footer.astro`
 
 ## Key Features
 
-### Dark Mode (⚠️ TROUBLESHOOTING IN PROGRESS)
-**Current Status**: Dark mode detection is NOT working despite multiple implementation attempts.
+### Dark Mode (✅ FIXED)
+**Root cause**: `postcss-custom-properties` with `{ preserve: false }` in `postcss.config.cjs` was resolving all CSS variables at build time. `var(--bg)` became `#f5f4f0` hardcoded, so `html.dark` had nothing to override.
 
-**Implementation Details** (src/pages/index.astro):
-- Inline script in `<head>` with `is:inline` directive (prevents bundling)
-- Checks `localStorage.getItem('theme')` first
-- Falls back to `window.matchMedia('(prefers-color-scheme: dark)')`
-- Adds `.dark` class to `<html>` element when dark mode detected
+**Fix**: Changed `{ preserve: false }` to `{ preserve: true }` in `postcss.config.cjs`. CSS variables now remain as `var(--bg)` etc. in compiled output, allowing `html.dark` overrides to work at runtime.
+
+**Implementation** (src/pages/index.astro):
+- Inline script in `<head>` with `is:inline` directive detects system preference
+- Adds `.dark` class to `<html>` when dark mode is active
 - CSS uses `html.dark` selector to override `:root` variables
-
-**Attempted Fixes**:
-1. `@media (prefers-color-scheme: dark)` with CSS variables - didn't work
-2. JavaScript setting `data-theme` attribute - didn't work
-3. Moved CSS variables from `:root` to `html, body` - didn't work
-4. Added `color-scheme` meta tags - didn't work
-5. Used class-based approach (`.dark`) with inline script - didn't work
-6. Changed to `html.dark` for CSS specificity - **PENDING TEST**
-
-**Debug Results**:
-- ✅ Script executes correctly
-- ✅ `prefers-color-scheme: dark` detects as `true` on Mac/iPhone
-- ✅ `.dark` class successfully added to `<html>` element
-- ❌ CSS variables not being overridden (suspected specificity issue)
-
-**Next Steps**: Need to verify if latest CSS specificity fix (commit f2938fe) resolves the issue
 
 ### Responsive Design
 - Mobile-first approach
