@@ -96,14 +96,6 @@ const personSchema = {
             --border: #444;
         }
 
-        html.dark .logo-light {
-            display: none;
-        }
-
-        html.dark .logo-dark {
-            display: block;
-        }
-
         html {
             scroll-behavior: smooth;
         }
@@ -262,12 +254,20 @@ const personSchema = {
             object-fit: contain;
         }
 
-        .logo-light {
-            display: block;
+        .company-logo .logo-light {
+            display: block !important;
         }
 
-        .logo-dark {
-            display: none;
+        .company-logo .logo-dark {
+            display: none !important;
+        }
+
+        html.dark .company-logo .logo-light {
+            display: none !important;
+        }
+
+        html.dark .company-logo .logo-dark {
+            display: block !important;
         }
 
         .experience-details {
