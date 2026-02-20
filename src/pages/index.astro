@@ -96,14 +96,6 @@ const personSchema = {
             --border: #444;
         }
 
-        html.dark .logo-light {
-            display: none;
-        }
-
-        html.dark .logo-dark {
-            display: block;
-        }
-
         html {
             scroll-behavior: smooth;
         }
@@ -262,12 +254,20 @@ const personSchema = {
             object-fit: contain;
         }
 
-        .logo-light {
-            display: block;
+        .company-logo .logo-light {
+            display: block !important;
         }
 
-        .logo-dark {
-            display: none;
+        .company-logo .logo-dark {
+            display: none !important;
+        }
+
+        html.dark .company-logo .logo-light {
+            display: none !important;
+        }
+
+        html.dark .company-logo .logo-dark {
+            display: block !important;
         }
 
         .experience-details {
@@ -570,7 +570,10 @@ const personSchema = {
         <!-- Profile -->
         <div id="about" class="profile">
             <div class="profile-photo">
-                <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role" />
+                <picture>
+                    <source srcset="/img/20240731-240731MBB-3329-Role-Edit.webp" type="image/webp">
+                    <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role">
+                </picture>
             </div>
             <h1>ERIK ROLE</h1>
             <p class="title">Assistant Director of Creative Video / Wisconsin Badgers</p>
