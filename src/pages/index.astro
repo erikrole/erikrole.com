@@ -21,7 +21,8 @@ const personSchema = {
     },
     sameAs: [
         "https://www.linkedin.com/in/erikrole/",
-        "https://instagram.com/erik_role",
+        "https://www.instagram.com/erikrole/",
+        "https://x.com/ErikRole",
     ],
 };
 ---
@@ -53,11 +54,12 @@ const personSchema = {
     <meta name="twitter:site" content="@ErikRole">
 
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
@@ -194,6 +196,13 @@ const personSchema = {
             transform: translateY(-2px);
         }
 
+        .social-link:focus-visible {
+            opacity: 1;
+            outline: 2px solid var(--text);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
         .social-icon {
             width: 20px;
             height: 20px;
@@ -286,6 +295,8 @@ const personSchema = {
             opacity: 1;
             transition: opacity 0.3s ease;
             cursor: pointer;
+            text-decoration: none;
+            display: block;
         }
 
         .scroll-indicator.hidden {
@@ -459,6 +470,99 @@ const personSchema = {
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                min-height: auto;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .profile {
+                position: static !important;
+                padding: 0 !important;
+                margin-bottom: 24px !important;
+                background: transparent !important;
+                backdrop-filter: none !important;
+            }
+
+            .profile-photo {
+                width: 80px !important;
+                height: 80px !important;
+            }
+
+            h1 {
+                transform: none !important;
+                font-size: 32px !important;
+            }
+
+            .title {
+                transform: none !important;
+                font-size: 14px !important;
+                color: #666 !important;
+            }
+
+            .initial-content {
+                opacity: 1 !important;
+                transform: none !important;
+                margin-bottom: 24px;
+            }
+
+            .bio {
+                font-size: 14px;
+                color: #333 !important;
+            }
+
+            .social-links {
+                display: none;
+            }
+
+            .resume-section {
+                opacity: 1 !important;
+                transform: none !important;
+                margin-top: 24px;
+            }
+
+            .resume-divider {
+                background: #ddd !important;
+            }
+
+            .experience-item {
+                border-bottom-color: #ddd !important;
+                page-break-inside: avoid;
+            }
+
+            .company-logo img {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .job-title {
+                color: black !important;
+            }
+
+            .duration {
+                color: #666 !important;
+            }
+
+            .scroll-indicator {
+                display: none !important;
+            }
+
+            footer {
+                position: static !important;
+                margin-top: 32px;
+                padding: 16px 0 0 0;
+                border-top: 1px solid #ddd;
+                color: #666 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -557,11 +661,11 @@ const personSchema = {
         </div>
 
         <!-- Scroll Indicator (mobile only) -->
-        <div class="scroll-indicator" aria-label="Scroll to see resume">
+        <a href="#resume" class="scroll-indicator" aria-label="Scroll to see resume">
             <svg class="arrow-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
-        </div>
+        </a>
     </div>
 
     <footer>

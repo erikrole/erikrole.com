@@ -29,3 +29,4 @@ lerna-debug.log*
 # Cache
 .cache/
 .parcel-cache/
+**/.DS_Store
