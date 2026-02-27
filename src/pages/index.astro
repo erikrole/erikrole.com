@@ -63,6 +63,7 @@ const personSchema = {
     <link rel="apple-touch-icon" href="/img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <script is:inline>
@@ -70,6 +71,23 @@ const personSchema = {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
+
+        // Print handler - redirect to PDF resume
+        // NOTE: Upload your resume PDF to /public/resume.pdf
+        window.addEventListener('beforeprint', function(event) {
+            event.preventDefault();
+            const resumeUrl = '/resume.pdf';
+            window.open(resumeUrl, '_blank');
+        });
+
+        // Also handle Ctrl+P / Cmd+P
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+                event.preventDefault();
+                const resumeUrl = '/resume.pdf';
+                window.open(resumeUrl, '_blank');
+            }
+        });
     </script>
 
     <style>
@@ -90,13 +108,22 @@ const personSchema = {
             --text: #0d0d0d;
             --text-secondary: #6b5e50;
             --border: #e8ddd0;
+
+            /* Spacing system (8px baseline) */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 40px;
+            --space-3xl: 48px;
         }
 
         html.dark {
             color-scheme: dark;
-            --bg: #28241e;
-            --text: #f5f5f5;
-            --text-secondary: #a89880;
+            --bg: #2d2825;
+            --text: #f0ede8;
+            --text-secondary: #a8998d;
             --border: #4a4035;
         }
 
@@ -108,7 +135,10 @@ const personSchema = {
             font-family: 'Lora', Georgia, 'Times New Roman', serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.5;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             transition: background-color 0.2s ease, color 0.2s ease;
             overflow-x: hidden;
         }
@@ -148,15 +178,16 @@ const personSchema = {
             font-family: 'Abril Fatface', Georgia, serif;
             font-size: 56px;
             font-weight: 400;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
-            line-height: 1;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
         }
 
         .title {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-secondary);
             font-weight: 400;
+            letter-spacing: 0.2px;
         }
 
         /* Initial Content (Bio & Social) */
@@ -167,12 +198,13 @@ const personSchema = {
 
         .bio {
             font-size: 15px;
-            line-height: 1.6;
+            line-height: 1.7;
             color: var(--text);
             margin-bottom: 24px;
-            max-width: 520px;
+            max-width: 480px;
             margin-left: auto;
             margin-right: auto;
+            letter-spacing: 0.2px;
         }
 
         .social-links {
@@ -183,7 +215,7 @@ const personSchema = {
 
         .social-link {
             color: var(--text);
-            opacity: 0.6;
+            opacity: 0.7;
             transition: opacity 0.2s ease, transform 0.2s ease;
             padding: 12px;
             display: inline-flex;
@@ -230,7 +262,15 @@ const personSchema = {
             margin-bottom: 16px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
+            animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
+
+        .experience-item:nth-child(1) { animation-delay: 0.0s; }
+        .experience-item:nth-child(2) { animation-delay: 0.1s; }
+        .experience-item:nth-child(3) { animation-delay: 0.2s; }
+        .experience-item:nth-child(4) { animation-delay: 0.3s; }
+        .experience-item:nth-child(5) { animation-delay: 0.4s; }
+        .experience-item:nth-child(6) { animation-delay: 0.5s; }
 
         .experience-item:last-child {
             border-bottom: none;
@@ -262,9 +302,12 @@ const personSchema = {
             object-fit: contain;
         }
 
-        .company-logo:hover img {
-            opacity: 0.8;
-            transition: opacity 0.2s ease;
+        .company-logo {
+            transition: transform 0.3s ease;
+        }
+
+        .company-logo:hover {
+            transform: translateY(-4px);
         }
 
         .company-logo .logo-light {
@@ -394,22 +437,20 @@ const personSchema = {
 
             h1 {
                 font-size: 48px;
-                transform-origin: center;
-                transition: transform var(--transition-duration) var(--transition-easing);
+                transition: opacity var(--transition-duration) var(--transition-easing);
             }
 
             .profile.scrolled h1 {
-                transform: scale(0.583); /* 28px / 48px = 0.583 */
+                opacity: 0.7;
             }
 
             .title {
                 font-size: 13px;
-                transform-origin: center;
-                transition: transform var(--transition-duration) var(--transition-easing);
+                transition: opacity var(--transition-duration) var(--transition-easing);
             }
 
             .profile.scrolled .title {
-                transform: scale(0.846); /* 11px / 13px = 0.846 */
+                opacity: 0.7;
             }
 
             /* Initial content fades out */
@@ -473,6 +514,40 @@ const personSchema = {
             }
         }
 
+        /* Tablet: Optimized layout */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 640px;
+            }
+        }
+
+        /* Ultra-wide: Larger container and scaled typography */
+        @media (min-width: 1441px) {
+            .container {
+                max-width: 700px;
+            }
+
+            h1 {
+                font-size: clamp(56px, 4vw, 64px);
+            }
+
+            .bio {
+                font-size: clamp(15px, 1.1vw, 17px);
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         /* Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
             *,
@@ -480,7 +555,21 @@ const personSchema = {
             *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+                transition-duration: 0.05s !important;
+            }
+
+            /* Disable complex animations but keep simple transitions */
+            .experience-item {
+                animation: none !important;
+            }
+
+            .profile-photo,
+            .company-logo {
+                animation: none !important;
+            }
+
+            .scroll-indicator {
+                animation: none !important;
             }
         }
 
