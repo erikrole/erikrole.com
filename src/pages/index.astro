@@ -60,7 +60,7 @@ const personSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
@@ -72,22 +72,6 @@ const personSchema = {
             document.documentElement.classList.add('dark');
         }
 
-        // Print handler - redirect to PDF resume
-        // NOTE: Upload your resume PDF to /public/resume.pdf
-        window.addEventListener('beforeprint', function(event) {
-            event.preventDefault();
-            const resumeUrl = '/resume.pdf';
-            window.open(resumeUrl, '_blank');
-        });
-
-        // Also handle Ctrl+P / Cmd+P
-        document.addEventListener('keydown', function(event) {
-            if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
-                event.preventDefault();
-                const resumeUrl = '/resume.pdf';
-                window.open(resumeUrl, '_blank');
-            }
-        });
     </script>
 
     <style>
@@ -294,16 +278,13 @@ const personSchema = {
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            transition: transform 0.3s ease;
         }
 
         .company-logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-        }
-
-        .company-logo {
-            transition: transform 0.3s ease;
         }
 
         .company-logo:hover {
@@ -754,8 +735,8 @@ const personSchema = {
 
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img class="logo-light" src="/img/B1G Network-White.png" alt="Big Ten Network" width="36" height="36" />
-                        <img class="logo-dark" src="/img/B1G Network-Black.png" alt="Big Ten Network" width="36" height="36" />
+                        <img class="logo-light" src="/img/B1G Network-Black.png" alt="Big Ten Network" width="36" height="36" />
+                        <img class="logo-dark" src="/img/B1G Network-White.png" alt="Big Ten Network" width="36" height="36" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Multi-Platform Video Editor / Big Ten Network</div>
