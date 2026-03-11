@@ -7,6 +7,7 @@ const pageDescription =
 const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.webp";
 const canonicalUrl = `${siteUrl}/`;
 const socialImageUrl = `${siteUrl}${socialImage}`;
+const email = "erikrole@gmail.com";
 
 const personSchema = {
     "@context": "https://schema.org",
@@ -76,11 +77,6 @@ const personSchema = {
     </script>
 
     <style>
-        :root {
-            --transition-duration: 0.3s;
-            --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -89,6 +85,8 @@ const personSchema = {
 
         :root {
             color-scheme: light dark;
+            --transition-duration: 0.3s;
+            --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
             --bg: #f5ede0;
             --text: #0d0d0d;
             --text-secondary: #6b5e50;
@@ -126,6 +124,7 @@ const personSchema = {
             -moz-osx-font-smoothing: grayscale;
             transition: background-color 0.2s ease, color 0.2s ease;
             overflow-x: hidden;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .container {
@@ -293,19 +292,19 @@ const personSchema = {
         }
 
         .company-logo .logo-light {
-            display: block !important;
+            display: block;
         }
 
         .company-logo .logo-dark {
-            display: none !important;
+            display: none;
         }
 
         html.dark .company-logo .logo-light {
-            display: none !important;
+            display: none;
         }
 
         html.dark .company-logo .logo-dark {
-            display: block !important;
+            display: block;
         }
 
         .experience-details {
@@ -524,10 +523,6 @@ const personSchema = {
             to { opacity: 1; }
         }
 
-        body {
-            animation: fadeIn 0.3s ease-out;
-        }
-
         /* Animations */
         @keyframes slideInLeft {
             from {
@@ -681,7 +676,7 @@ const personSchema = {
             </p>
 
             <div id="contact" class="social-links">
-                <a id="email-link" href="mailto:erikrole@gmail.com" class="social-link" aria-label="Email">
+                <a id="email-link" href={`mailto:${email}`} class="social-link" aria-label="Email">
                     <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
                 <a href="https://www.instagram.com/erikrole/" target="_blank" rel="noopener me" class="social-link" aria-label="Instagram">
@@ -773,10 +768,10 @@ const personSchema = {
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Set email tooltip
+        // Set email tooltip from href
         const emailLink = document.getElementById('email-link');
         if (emailLink) {
-            emailLink.setAttribute('title', 'erikrole@gmail.com');
+            emailLink.setAttribute('title', emailLink.href.replace('mailto:', ''));
         }
 
         // Listen for system theme changes
@@ -791,8 +786,6 @@ const personSchema = {
         } else if (typeof darkModeQuery.addListener === 'function') {
             darkModeQuery.addListener(syncDarkClass);
         }
-
-        syncDarkClass(darkModeQuery);
 
         const profile = document.querySelector('.profile');
         const initialContent = document.querySelector('.initial-content');
