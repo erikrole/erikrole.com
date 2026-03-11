@@ -35,7 +35,7 @@ const personSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#f5ede0" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#28241e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#2d2825" media="(prefers-color-scheme: dark)">
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription}>
     <meta name="author" content="Erik Role">
@@ -56,6 +56,7 @@ const personSchema = {
     <meta name="twitter:description" content={pageDescription}>
     <meta name="twitter:image" content={socialImageUrl}>
     <meta name="twitter:site" content="@ErikRole">
+    <meta name="twitter:creator" content="@ErikRole">
 
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -63,8 +64,8 @@ const personSchema = {
     <link rel="apple-touch-icon" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></noscript>
 
     <script is:inline>
         // Run BEFORE page renders to prevent flash
@@ -517,6 +518,16 @@ const personSchema = {
             }
         }
 
+        /* Page entrance */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            animation: fadeIn 0.3s ease-out;
+        }
+
         /* Animations */
         @keyframes slideInLeft {
             from {
@@ -655,7 +666,7 @@ const personSchema = {
             <div class="profile-photo">
                 <picture>
                     <source srcset="/img/20240731-240731MBB-3329-Role-Edit.webp" type="image/webp">
-                    <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role" width="100" height="100">
+                    <img src="/img/20240731-240731MBB-3329-Role-Edit.jpeg" alt="Erik Role" width="100" height="100" fetchpriority="high">
                 </picture>
             </div>
             <h1>Erik Role</h1>
@@ -670,7 +681,7 @@ const personSchema = {
             </p>
 
             <div id="contact" class="social-links">
-                <a id="email-link" href="#contact" class="social-link" aria-label="Email">
+                <a id="email-link" href="mailto:erikrole@gmail.com" class="social-link" aria-label="Email">
                     <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
                 <a href="https://www.instagram.com/erikrole/" target="_blank" rel="noopener me" class="social-link" aria-label="Instagram">
@@ -691,7 +702,7 @@ const personSchema = {
                 <!-- PRESENT ROLES -->
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" />
+                        <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" loading="lazy" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Assistant Director of Creative Video / Wisconsin Badgers</div>
@@ -701,7 +712,7 @@ const personSchema = {
 
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img src="/img/Bucks.png" alt="Milwaukee Bucks" width="36" height="36" />
+                        <img src="/img/Bucks.png" alt="Milwaukee Bucks" width="36" height="36" loading="lazy" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Videoboard Content Creator / Milwaukee Bucks</div>
@@ -715,7 +726,7 @@ const personSchema = {
                 <!-- PREVIOUS ROLES -->
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" />
+                        <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" loading="lazy" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Digital Producer / Wisconsin Badgers</div>
@@ -725,7 +736,7 @@ const personSchema = {
 
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img src="/img/Brewers.png" alt="Milwaukee Brewers" width="36" height="36" />
+                        <img src="/img/Brewers.png" alt="Milwaukee Brewers" width="36" height="36" loading="lazy" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Videoboard Content Creator / Milwaukee Brewers</div>
@@ -735,8 +746,8 @@ const personSchema = {
 
                 <div class="experience-item">
                     <div class="company-logo">
-                        <img class="logo-light" src="/img/B1G Network-Black.png" alt="Big Ten Network" width="36" height="36" />
-                        <img class="logo-dark" src="/img/B1G Network-White.png" alt="Big Ten Network" width="36" height="36" />
+                        <img class="logo-light" src="/img/B1G Network-Black.png" alt="Big Ten Network" width="36" height="36" loading="lazy" />
+                        <img class="logo-dark" src="/img/B1G Network-White.png" alt="Big Ten Network" width="36" height="36" loading="lazy" />
                     </div>
                     <div class="experience-details">
                         <div class="job-title">Multi-Platform Video Editor / Big Ten Network</div>
@@ -762,15 +773,10 @@ const personSchema = {
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Basic email obfuscation to reduce static scraping
+        // Set email tooltip
         const emailLink = document.getElementById('email-link');
         if (emailLink) {
-            const localPart = ['erik', 'role'].join('');
-            const domain = ['gmail', 'com'].join('.');
-            const address = `${localPart}@${domain}`;
-
-            emailLink.setAttribute('href', `mailto:${address}`);
-            emailLink.setAttribute('title', address);
+            emailLink.setAttribute('title', 'erikrole@gmail.com');
         }
 
         // Listen for system theme changes
