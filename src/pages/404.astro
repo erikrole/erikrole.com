@@ -20,10 +20,9 @@ const pageDescription = "Page not found";
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <script is:inline>
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        document.documentElement.classList.toggle('dark', darkQuery.matches);
+        darkQuery.addEventListener('change', function(e) {
             document.documentElement.classList.toggle('dark', e.matches);
         });
     </script>
