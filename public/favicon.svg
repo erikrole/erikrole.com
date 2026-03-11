@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <style>
     @media (prefers-color-scheme: dark) {
-      .bg { fill: #28241e; }
-      .text { fill: #f5f5f5; }
+      .bg { fill: #2d2825; }
+      .text { fill: #f0ede8; }
     }
     @media (prefers-color-scheme: light) {
       .bg { fill: #f5ede0; }
