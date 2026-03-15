@@ -1,7 +1,7 @@
 {
-  "name": "clay-astro-theme",
+  "name": "erikrole-com",
   "version": "1.0.0",
-  "description": "A minimalist, high-performance Astro theme for photographers and artists.",
+  "description": "Personal landing page for Erik Role",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
