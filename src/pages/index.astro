@@ -240,6 +240,18 @@ const personSchema = {
             margin-top: 40px;
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         .resume {
             width: 100%;
         }
@@ -437,9 +449,9 @@ const personSchema = {
             }
 
             .profile.scrolled .profile-photo {
-                width: 50px;
-                height: 50px;
-                margin-bottom: 12px;
+                width: 64px;
+                height: 64px;
+                margin-bottom: 14px;
             }
 
             .profile.scrolled .profile-photo:hover {
@@ -592,9 +604,16 @@ const personSchema = {
 
         /* Print Styles */
         @media print {
+            :root, html.dark {
+                --bg: white;
+                --text: black;
+                --text-secondary: #666;
+                --border: #ddd;
+            }
+
             body {
-                background: white;
-                color: black;
+                background: var(--bg);
+                color: var(--text);
                 min-height: auto;
             }
 
@@ -624,7 +643,6 @@ const personSchema = {
             .title {
                 transform: none !important;
                 font-size: 14px !important;
-                color: #666 !important;
             }
 
             .initial-content {
@@ -635,7 +653,6 @@ const personSchema = {
 
             .bio {
                 font-size: 14px;
-                color: #333 !important;
             }
 
             .social-links {
@@ -648,26 +665,13 @@ const personSchema = {
                 margin-top: 24px;
             }
 
-            .resume-divider {
-                background: #ddd !important;
-            }
-
             .experience-item {
-                border-bottom-color: #ddd !important;
                 page-break-inside: avoid;
             }
 
             .company-logo img {
                 print-color-adjust: exact;
                 -webkit-print-color-adjust: exact;
-            }
-
-            .job-title {
-                color: black !important;
-            }
-
-            .duration {
-                color: #666 !important;
             }
 
             .scroll-indicator {
@@ -678,8 +682,7 @@ const personSchema = {
                 position: static !important;
                 margin-top: 32px;
                 padding: 16px 0 0 0;
-                border-top: 1px solid #ddd;
-                color: #666 !important;
+                border-top: 1px solid var(--border);
             }
         }
     </style>
@@ -723,6 +726,7 @@ const personSchema = {
 
         <!-- Resume Section -->
         <div id="resume" class="resume-section">
+            <h2 class="sr-only">Experience</h2>
             <div class="resume">
                 <!-- PRESENT ROLES -->
                 <div class="experience-item">
