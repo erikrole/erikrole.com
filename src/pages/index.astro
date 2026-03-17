@@ -91,6 +91,7 @@ const personSchema = {
             --text: #0d0d0d;
             --text-secondary: #6b5e50;
             --border: #e8ddd0;
+            --accent-green: #4caf50;
 
             /* Spacing system (8px baseline) */
             --space-xs: 4px;
@@ -131,9 +132,9 @@ const personSchema = {
             letter-spacing: 0.3px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease;
             overflow-x: hidden;
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn var(--transition-duration) ease-out;
         }
 
         .container {
@@ -154,7 +155,7 @@ const personSchema = {
             border-radius: 50%;
             margin: 0 auto 20px;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-duration) ease;
             box-shadow: 0 0 0 2px var(--border);
         }
 
@@ -210,7 +211,7 @@ const personSchema = {
         .social-link {
             color: var(--text);
             opacity: 0.7;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: opacity var(--transition-duration) ease, transform var(--transition-duration) ease;
             padding: 12px;
             display: inline-flex;
             align-items: center;
@@ -270,7 +271,7 @@ const personSchema = {
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
             border-radius: 8px;
-            transition: background-color 0.2s ease;
+            transition: background-color var(--transition-duration) ease;
             animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
 
@@ -278,12 +279,7 @@ const personSchema = {
             background: color-mix(in srgb, var(--text) 4%, transparent);
         }
 
-        .experience-item:nth-child(1) { animation-delay: 0.0s; }
-        .experience-item:nth-child(2) { animation-delay: 0.1s; }
-        .experience-item:nth-child(3) { animation-delay: 0.2s; }
-        .experience-item:nth-child(4) { animation-delay: 0.3s; }
-        .experience-item:nth-child(5) { animation-delay: 0.4s; }
-        .experience-item:nth-child(6) { animation-delay: 0.5s; }
+        .experience-item { animation-delay: calc(var(--item-index, 0) * 0.1s); }
 
         .experience-item:last-child {
             border-bottom: none;
@@ -307,7 +303,7 @@ const personSchema = {
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-duration) ease;
         }
 
         .company-logo img {
@@ -356,7 +352,7 @@ const personSchema = {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #4caf50;
+            background: var(--accent-green);
             margin-right: 4px;
             vertical-align: middle;
             position: relative;
@@ -371,7 +367,7 @@ const personSchema = {
             transform: translateX(-50%);
             color: var(--text-secondary);
             opacity: 1;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-duration) ease;
             cursor: pointer;
             text-decoration: none;
             display: block;
@@ -729,7 +725,7 @@ const personSchema = {
             <h2 class="sr-only">Experience</h2>
             <div class="resume">
                 <!-- PRESENT ROLES -->
-                <div class="experience-item">
+                <div class="experience-item" style="--item-index: 0;">
                     <div class="company-logo">
                         <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" loading="lazy" decoding="async" />
                     </div>
@@ -739,7 +735,7 @@ const personSchema = {
                     </div>
                 </div>
 
-                <div class="experience-item">
+                <div class="experience-item" style="--item-index: 1;">
                     <div class="company-logo">
                         <img src="/img/Bucks.png" alt="Milwaukee Bucks" width="36" height="36" loading="lazy" decoding="async" />
                     </div>
@@ -753,7 +749,7 @@ const personSchema = {
                 <div class="resume-divider"></div>
 
                 <!-- PREVIOUS ROLES -->
-                <div class="experience-item">
+                <div class="experience-item" style="--item-index: 2;">
                     <div class="company-logo">
                         <img src="/img/Badgers.png" alt="Wisconsin Badgers" width="36" height="36" loading="lazy" decoding="async" />
                     </div>
@@ -763,7 +759,7 @@ const personSchema = {
                     </div>
                 </div>
 
-                <div class="experience-item">
+                <div class="experience-item" style="--item-index: 3;">
                     <div class="company-logo">
                         <img src="/img/Brewers.png" alt="Milwaukee Brewers" width="36" height="36" loading="lazy" decoding="async" />
                     </div>
@@ -773,7 +769,7 @@ const personSchema = {
                     </div>
                 </div>
 
-                <div class="experience-item">
+                <div class="experience-item" style="--item-index: 4;">
                     <div class="company-logo">
                         <img class="logo-light" src="/img/B1G Network-Black.png" alt="Big Ten Network" width="36" height="36" loading="lazy" decoding="async" />
                         <img class="logo-dark" src="/img/B1G Network-White.png" alt="Big Ten Network" width="36" height="36" loading="lazy" decoding="async" />
