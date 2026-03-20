@@ -65,7 +65,7 @@ const personSchema = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f5ede0" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#2d2825" media="(prefers-color-scheme: dark)">
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription}>
@@ -113,7 +113,7 @@ const personSchema = {
                 <ProfilePhoto client:load />
             </div>
             <h1 class="font-heading text-[clamp(48px,8vw,72px)] font-normal mb-3 tracking-wide leading-[1.1] animate-fade-in-up [animation-delay:100ms] print:!text-[32px] print:!transform-none">Erik Role</h1>
-            <p class="title text-base text-muted-foreground font-semibold italic tracking-wide animate-fade-in-up [animation-delay:200ms] print:!text-sm print:!transform-none">
+            <p class="title text-sm text-muted-foreground font-medium uppercase tracking-[0.15em] animate-fade-in-up [animation-delay:200ms] print:!text-sm print:!transform-none">
                 Assistant Director of Creative Video / Wisconsin Badgers
             </p>
         </div>
@@ -167,9 +167,12 @@ const personSchema = {
 
         function setResumeVisible(isVisible: boolean) {
             profile?.classList.toggle('scrolled', isVisible);
-            initialContent?.classList.toggle('hidden', isVisible);
+            initialContent?.classList.toggle('faded', isVisible);
             resumeSection?.classList.toggle('visible', isVisible);
-            scrollIndicator?.classList.toggle('hidden', isVisible || !mobileQuery.matches);
+            if (scrollIndicator) {
+                scrollIndicator.classList.toggle('opacity-0', isVisible || !mobileQuery.matches);
+                scrollIndicator.classList.toggle('pointer-events-none', isVisible || !mobileQuery.matches);
+            }
         }
 
         // Observer watches when the bio section leaves the viewport

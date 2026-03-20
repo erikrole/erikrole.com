@@ -27,14 +27,14 @@ export function ExperienceCard({
       style={{ animationDelay: `${index * 100}ms` }}
     >
       <CardContent className="flex gap-3 p-2 pb-4">
-        <div className="w-9 h-9 flex-shrink-0 rounded overflow-hidden flex items-center justify-center hover:-translate-y-1 transition-transform duration-300">
+        <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center hover:-translate-y-1 transition-transform duration-300">
           {logoDark ? (
             <>
               <img
                 src={logo}
                 alt={company}
-                width={36}
-                height={36}
+                width={40}
+                height={40}
                 className="w-full h-full object-contain dark:hidden"
                 loading="lazy"
                 decoding="async"
@@ -42,8 +42,8 @@ export function ExperienceCard({
               <img
                 src={logoDark}
                 alt={company}
-                width={36}
-                height={36}
+                width={40}
+                height={40}
                 className="w-full h-full object-contain hidden dark:block"
                 loading="lazy"
                 decoding="async"

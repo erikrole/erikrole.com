@@ -4,25 +4,25 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f5ede0;
+  --background: #f7f7f7;
   --foreground: #0d0d0d;
-  --card: #f5ede0;
+  --card: #f7f7f7;
   --card-foreground: #0d0d0d;
-  --popover: #f5ede0;
+  --popover: #f7f7f7;
   --popover-foreground: #0d0d0d;
   --primary: #0d0d0d;
-  --primary-foreground: #f5ede0;
-  --secondary: #e8ddd0;
+  --primary-foreground: #f7f7f7;
+  --secondary: #ebebeb;
   --secondary-foreground: #0d0d0d;
-  --muted: #e8ddd0;
-  --muted-foreground: #6b5e50;
-  --accent: #e8ddd0;
+  --muted: #ebebeb;
+  --muted-foreground: #636363;
+  --accent: #ebebeb;
   --accent-foreground: #0d0d0d;
   --destructive: #ef4444;
-  --destructive-foreground: #f5ede0;
-  --border: #e8ddd0;
-  --input: #e8ddd0;
-  --ring: #6b5e50;
+  --destructive-foreground: #f7f7f7;
+  --border: #e0e0e0;
+  --input: #e0e0e0;
+  --ring: #636363;
   --accent-green: #4caf50;
   --radius: 0.5rem;
 }
@@ -138,12 +138,12 @@
   }
 
   ::selection {
-    background: rgba(107, 94, 80, 0.25);
+    background: rgba(13, 13, 13, 0.15);
     color: var(--color-foreground);
   }
 
   .dark ::selection {
-    background: rgba(168, 153, 141, 0.3);
+    background: rgba(240, 237, 232, 0.2);
   }
 }
 
@@ -199,7 +199,7 @@
                 transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .initial-content.hidden {
+  .initial-content.faded {
     opacity: 0;
     transform: translate3d(0, -20px, 0);
     pointer-events: none;
