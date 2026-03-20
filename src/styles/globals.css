@@ -228,50 +228,20 @@
   }
 }
 
-/* Print styles */
+/* Print: override theme to black/white */
 @media print {
   :root, .dark {
     --background: white;
     --foreground: black;
     --muted-foreground: #666;
     --border: #ddd;
+    --card: white;
+    --card-foreground: black;
   }
 
   body {
     background: white;
     color: black;
     min-height: auto;
-  }
-
-  .profile {
-    position: static !important;
-    padding: 0 !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-  }
-
-  .initial-content {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .social-links-wrapper {
-    display: none;
-  }
-
-  .resume-section {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .scroll-indicator {
-    display: none !important;
-  }
-
-  footer {
-    position: static !important;
-    margin-top: 32px;
-    padding: 16px 0 0 0;
-    border-top: 1px solid var(--color-border);
   }
 }

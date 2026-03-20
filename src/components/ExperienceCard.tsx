@@ -23,7 +23,7 @@ export function ExperienceCard({
 }: ExperienceCardProps) {
   return (
     <Card
-      className="border-0 border-b border-border/50 rounded-lg bg-transparent shadow-none hover:shadow-md hover:scale-[1.02] hover:border-border hover:bg-foreground/[0.04] transition-all duration-300 ease-out animate-slide-in-left"
+      className="border-0 border-b border-border/50 rounded-lg bg-transparent shadow-none hover:shadow-md hover:scale-[1.02] hover:border-border hover:bg-foreground/[0.04] transition-all duration-300 ease-out animate-slide-in-left print:break-inside-avoid print:shadow-none print:hover:shadow-none print:hover:scale-100"
       style={{ animationDelay: `${index * 100}ms` }}
     >
       <CardContent className="flex gap-3 p-2 pb-4">

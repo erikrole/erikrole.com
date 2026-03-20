@@ -24,6 +24,33 @@ const personSchema = {
         name: "Wisconsin Badgers",
         url: "https://uwbadgers.com",
     },
+    alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "University of Wisconsin-Madison",
+    },
+    knowsAbout: [
+        "Video Production",
+        "Creative Direction",
+        "Social Media Content",
+        "In-Venue Production",
+        "Brand Strategy",
+    ],
+    hasOccupation: [
+        {
+            "@type": "Occupation",
+            name: "Assistant Director of Creative Video",
+            occupationLocation: { "@type": "Place", name: "Madison, WI" },
+            description: "Leading creative video production for Wisconsin Men's Basketball",
+            employer: { "@type": "SportsOrganization", name: "Wisconsin Badgers", url: "https://uwbadgers.com" },
+        },
+        {
+            "@type": "Occupation",
+            name: "Videoboard Content Creator",
+            occupationLocation: { "@type": "Place", name: "Milwaukee, WI" },
+            description: "Creating videoboard content for Milwaukee Bucks game-day productions",
+            employer: { "@type": "SportsOrganization", name: "Milwaukee Bucks", url: "https://www.nba.com/bucks" },
+        },
+    ],
     sameAs: [
         "https://www.linkedin.com/in/erikrole/",
         "https://www.instagram.com/erikrole/",
@@ -81,114 +108,108 @@ const personSchema = {
     <div class="container max-w-[640px] mx-auto px-6 py-10 pb-20 max-md:min-h-[calc(100vh-88px)] max-md:flex max-md:flex-col max-md:justify-center max-md:px-5 max-md:pt-[60px] max-md:pb-5 md:flex-1 md:flex md:flex-col md:justify-center">
 
         <!-- Profile Section -->
-        <div id="about" class="profile text-center mb-10 md:static">
+        <div id="about" class="profile text-center mb-10 md:static print:!static print:!p-0 print:!bg-transparent print:!backdrop-blur-none print:mb-6">
             <div class="animate-fade-in-up">
                 <ProfilePhoto client:load />
             </div>
-            <h1 class="font-heading text-[clamp(48px,8vw,72px)] font-normal mb-3 tracking-wide leading-[1.1] animate-fade-in-up [animation-delay:100ms]">Erik Role</h1>
-            <p class="title text-base text-muted-foreground font-semibold italic tracking-wide animate-fade-in-up [animation-delay:200ms]">
+            <h1 class="font-heading text-[clamp(48px,8vw,72px)] font-normal mb-3 tracking-wide leading-[1.1] animate-fade-in-up [animation-delay:100ms] print:!text-[32px] print:!transform-none">Erik Role</h1>
+            <p class="title text-base text-muted-foreground font-semibold italic tracking-wide animate-fade-in-up [animation-delay:200ms] print:!text-sm print:!transform-none">
                 Assistant Director of Creative Video / Wisconsin Badgers
             </p>
         </div>
 
         <!-- Bio & Social Links -->
-        <div class="initial-content text-center mb-10">
-            <p class="text-[15px] leading-relaxed text-foreground mb-6 max-w-[480px] mx-auto tracking-wide animate-fade-in-up [animation-delay:300ms]">
+        <div class="initial-content text-center mb-10 print:!opacity-100 print:!transform-none print:mb-6">
+            <p class="text-[15px] leading-relaxed text-foreground mb-6 max-w-[480px] mx-auto tracking-wide animate-fade-in-up [animation-delay:300ms] print:text-sm">
                 Creative video producer leading visual storytelling for Wisconsin Men's Basketball.
                 Specializing in social-first content, in-venue production, and brand strategy.
             </p>
-            <div class="animate-fade-in-up [animation-delay:400ms]">
+            <div class="animate-fade-in-up [animation-delay:400ms] print:hidden">
                 <SocialLinks client:load />
             </div>
         </div>
 
         <!-- Resume Section -->
-        <div id="resume" class="resume-section mt-12">
+        <div id="resume" class="resume-section mt-12 print:!opacity-100 print:!transform-none print:mt-6">
             <h2 class="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6 text-center font-semibold">Experience</h2>
             <ResumeList client:visible />
         </div>
 
         <!-- Scroll Indicator (mobile only) -->
-        <a href="#resume" class="scroll-indicator fixed bottom-[calc(40px+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 text-muted-foreground transition-opacity duration-300 cursor-pointer no-underline block md:hidden" aria-label="Scroll to see resume">
+        <a href="#resume" class="scroll-indicator fixed bottom-[calc(40px+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 text-muted-foreground transition-opacity duration-300 cursor-pointer no-underline block md:hidden print:!hidden" aria-label="Scroll to see resume">
             <svg class="w-6 h-6 animate-bounce-arrow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
         </a>
     </div>
 
-    <footer class="text-center py-6 px-6 pb-10 text-[13px] text-muted-foreground sticky bottom-0 bg-background">
+    <footer class="text-center py-6 px-6 pb-10 text-[13px] text-muted-foreground sticky bottom-0 bg-background print:!static print:mt-8 print:p-0 print:pt-4 print:border-t print:border-border">
         &copy; <span id="year"></span> Erik Role
     </footer>
 
     <script>
+        // Year
         document.getElementById('year')!.textContent = String(new Date().getFullYear());
 
+        // Dark mode sync
         const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const syncDarkClass = (eventOrQuery: MediaQueryListEvent | MediaQueryList) => {
-            const isDark = 'matches' in eventOrQuery ? eventOrQuery.matches : darkModeQuery.matches;
-            document.documentElement.classList.toggle('dark', isDark);
-        };
+        darkModeQuery.addEventListener('change', (e) => {
+            document.documentElement.classList.toggle('dark', e.matches);
+        });
 
-        if (typeof darkModeQuery.addEventListener === 'function') {
-            darkModeQuery.addEventListener('change', syncDarkClass);
-        }
-
+        // Mobile scroll reveal via IntersectionObserver
         const profile = document.querySelector('.profile');
         const initialContent = document.querySelector('.initial-content');
         const resumeSection = document.querySelector('.resume-section');
         const scrollIndicator = document.querySelector('.scroll-indicator');
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        let isMobile = window.matchMedia('(max-width: 768px)').matches;
-        let ticking = false;
+        const mobileQuery = window.matchMedia('(max-width: 768px)');
 
         function setResumeVisible(isVisible: boolean) {
             profile?.classList.toggle('scrolled', isVisible);
             initialContent?.classList.toggle('hidden', isVisible);
             resumeSection?.classList.toggle('visible', isVisible);
-            scrollIndicator?.classList.toggle('hidden', isVisible || !isMobile);
+            scrollIndicator?.classList.toggle('hidden', isVisible || !mobileQuery.matches);
         }
 
-        function shouldRevealResume() {
-            const scrollRevealOffset = reducedMotion ? 12 : 24;
-            const initialContentBottom = initialContent?.getBoundingClientRect().bottom ?? 0;
-            const viewportTrigger = window.innerHeight * (reducedMotion ? 0.9 : 0.78);
-            return window.scrollY > scrollRevealOffset && initialContentBottom <= viewportTrigger;
-        }
+        // Observer watches when the bio section leaves the viewport
+        // When it's no longer intersecting, reveal the resume
+        const threshold = reducedMotion ? 0.1 : 0.22;
+        let observer: IntersectionObserver | null = null;
 
-        function updateMobileRevealState() {
-            if (!isMobile) {
+        function setupObserver() {
+            observer?.disconnect();
+
+            if (!mobileQuery.matches) {
+                // Desktop: always show everything
                 setResumeVisible(true);
                 return;
             }
-            setResumeVisible(shouldRevealResume());
-        }
 
-        function queueMobileRevealUpdate() {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-                updateMobileRevealState();
-                ticking = false;
-            });
-        }
+            // Start with resume hidden on mobile
+            setResumeVisible(false);
 
-        function handleViewportChange() {
-            const wasMobile = isMobile;
-            isMobile = window.matchMedia('(max-width: 768px)').matches;
-            if (wasMobile !== isMobile) {
-                updateMobileRevealState();
-                return;
+            observer = new IntersectionObserver(
+                (entries) => {
+                    for (const entry of entries) {
+                        // Bio is leaving the viewport → show resume
+                        // Bio is entering the viewport → hide resume
+                        setResumeVisible(!entry.isIntersecting);
+                    }
+                },
+                { threshold }
+            );
+
+            if (initialContent) {
+                observer.observe(initialContent);
             }
-            queueMobileRevealUpdate();
         }
 
-        window.addEventListener('scroll', queueMobileRevealUpdate, { passive: true });
-        window.addEventListener('resize', handleViewportChange, { passive: true });
-        window.addEventListener('orientationchange', handleViewportChange, { passive: true });
-        window.addEventListener('pageshow', () => updateMobileRevealState());
+        // Re-setup on viewport changes (mobile ↔ desktop)
+        mobileQuery.addEventListener('change', setupObserver);
+        window.addEventListener('pageshow', setupObserver);
 
-        updateMobileRevealState();
+        setupObserver();
     </script>
 </body>
 </html>
