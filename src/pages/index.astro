@@ -129,6 +129,9 @@ const personSchema = {
             </div>
         </div>
 
+        <!-- Scroll sentinel: observed by IntersectionObserver to trigger reveal -->
+        <div id="scroll-sentinel" class="h-0 w-0 md:hidden" aria-hidden="true"></div>
+
         <!-- Resume Section -->
         <div id="resume" class="resume-section mt-12 print:!opacity-100 print:!transform-none print:mt-6">
             <h2 class="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6 text-center font-semibold">Experience</h2>
@@ -162,7 +165,7 @@ const personSchema = {
         const initialContent = document.querySelector('.initial-content');
         const resumeSection = document.querySelector('.resume-section');
         const scrollIndicator = document.querySelector('.scroll-indicator');
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const scrollSentinel = document.getElementById('scroll-sentinel');
         const mobileQuery = window.matchMedia('(max-width: 768px)');
 
         function setResumeVisible(isVisible: boolean) {
@@ -175,40 +178,35 @@ const personSchema = {
             }
         }
 
-        // Observer watches when the bio section leaves the viewport
-        // When it's no longer intersecting, reveal the resume
-        const threshold = reducedMotion ? 0.1 : 0.22;
         let observer: IntersectionObserver | null = null;
 
         function setupObserver() {
             observer?.disconnect();
 
             if (!mobileQuery.matches) {
-                // Desktop: always show everything
                 setResumeVisible(true);
                 return;
             }
 
-            // Start with resume hidden on mobile
             setResumeVisible(false);
 
+            // Observe a sentinel element placed between bio and resume.
+            // rootMargin shrinks the observed viewport so the sentinel
+            // "leaves" early — triggering the reveal after a small scroll.
             observer = new IntersectionObserver(
                 (entries) => {
                     for (const entry of entries) {
-                        // Bio is leaving the viewport → show resume
-                        // Bio is entering the viewport → hide resume
                         setResumeVisible(!entry.isIntersecting);
                     }
                 },
-                { threshold }
+                { rootMargin: '-30% 0px -70% 0px' }
             );
 
-            if (initialContent) {
-                observer.observe(initialContent);
+            if (scrollSentinel) {
+                observer.observe(scrollSentinel);
             }
         }
 
-        // Re-setup on viewport changes (mobile ↔ desktop)
         mobileQuery.addEventListener('change', setupObserver);
         window.addEventListener('pageshow', setupObserver);
 
