@@ -1,41 +1,36 @@
 # CLAUDE.md - Erik Role Personal Website
 
 ## Overview
-Personal landing page for Erik Role — a refined minimal, single-page static site with a 404 page. Built with Astro + React islands, styled with Tailwind CSS v4 and shadcn/ui components. Deployed to Cloudflare Pages.
+Personal landing page for Erik Role — a refined minimal site with a tabbed About / Experience layout. Built with Astro 6 + a single React island. Hand-rolled CSS using design tokens (no Tailwind, no component library). Deployed to Cloudflare Pages.
 
 **URL**: https://erikrole.com
 
 ## Tech Stack
-- **Framework**: Astro 5.x (static site generator) with React islands
-- **UI Components**: shadcn/ui (React) — Avatar, Card, Separator, Tooltip
-- **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` plugin
-- **Fonts**: Abril Fatface + Lora (Google Fonts)
-- **Deployment**: Cloudflare Pages (wrangler.toml)
+- **Framework**: Astro 6.x (static SSG) with one React island
+- **UI**: Plain React + plain CSS (no Tailwind, no shadcn, no Radix)
+- **Styling**: CSS custom properties in `src/styles/globals.css` — `oklch()` color tokens, light + dark themes
+- **Fonts**: Self-hosted Abril Fatface (display) + Darker Grotesque (body), served from `/fonts/`
+- **Deployment**: Cloudflare Pages (`wrangler.toml`, output dir `dist/`)
+- **CI**: GitHub Actions runs `npm run build` on push/PR (`.github/workflows/build.yml`)
 
 ## Project Structure
 ```
 /
 ├── public/
-│   ├── img/                    # Profile photo, company logos
-│   ├── favicon.svg/ico         # Site icons
+│   ├── fonts/                  # Self-hosted woff2 (Abril Fatface, Darker Grotesque)
+│   ├── img/                    # Headshot, brand logos
+│   ├── favicon.svg / favicon.ico
 │   └── robots.txt
 ├── src/
 │   ├── components/
-│   │   ├── ui/                 # shadcn primitives (avatar, card, separator, tooltip)
-│   │   ├── ProfilePhoto.tsx    # Avatar with hover scale + shadow bloom
-│   │   ├── SocialLinks.tsx     # Tooltip-wrapped icon links
-│   │   ├── ExperienceCard.tsx  # Elevated card with hover lift
-│   │   └── ResumeList.tsx      # Cards + Separator composition
-│   ├── lib/
-│   │   └── utils.ts            # cn() utility (clsx + tailwind-merge)
+│   │   └── Site.tsx            # Single React island: TabBar + About + Experience + ThemeToggle
 │   ├── styles/
-│   │   └── globals.css         # Tailwind + shadcn theme + animations
+│   │   └── globals.css         # All design tokens, layout, components, print, reduced-motion
 │   └── pages/
-│       ├── index.astro         # Homepage with React islands
-│       └── 404.astro           # 404 page (Tailwind only, no React)
-├── components.json             # shadcn configuration
-├── astro.config.mjs            # Astro + React + Tailwind v4 config
-├── tsconfig.json               # TypeScript with @/* path aliases
+│       ├── index.astro         # Mounts <Site client:load />
+│       └── 404.astro           # Standalone, scoped <style>, no shared layout
+├── astro.config.mjs            # Astro + @astrojs/react + @astrojs/sitemap
+├── tsconfig.json               # @/* path aliases
 ├── wrangler.toml               # Cloudflare Pages config
 └── package.json
 ```
@@ -45,75 +40,56 @@ Personal landing page for Erik Role — a refined minimal, single-page static si
 npm run dev      # Dev server at localhost:4321
 npm run build    # Production build to dist/
 npm run preview  # Preview production build
-npx shadcn@latest add <component>  # Add new shadcn component
 ```
 
-## Architecture: Astro Islands
-React components render as islands within Astro pages:
-- `ProfilePhoto` — `client:load` (tiny bundle, renders immediately)
-- `SocialLinks` — `client:load` (tooltips need client JS)
-- `ResumeList` — `client:visible` (below fold on mobile, delays hydration)
-- 404 page uses plain Tailwind classes (no React hydration needed)
+## Architecture
+The whole interactive UI is one island: `Site.tsx` is mounted with `client:load` from `index.astro`. It owns:
+- Tab state (About / Experience)
+- Scroll-based tab-bar shadow
+- Expand/collapse state for experience rows
+- Theme toggle (writes `.dark` class + `data-theme` to `<html>`)
 
-Mobile scroll behavior stays as vanilla JS in `<script>` tags (tightly coupled to page structure, not React state).
+The 404 page is fully standalone with inline `<style>` — no React, no shared layout, no dependencies on Site.tsx.
 
-## Homepage Features (index.astro)
-- Profile photo (120px Avatar) with hover scale + shadow bloom
-- Name (Abril Fatface, fluid clamp sizing) + italic job title
-- Bio paragraph with staggered fade-in-up entrance animations
-- Social links with shadcn Tooltips (Instagram, X, LinkedIn, Email)
-- Resume section with elevated Cards, hover lift, staggered entrance
-- Mobile: scroll-triggered reveal — bio fades out, resume slides in, profile shrinks sticky
-- Desktop: all content visible, vertically centered layout
-- Dark mode via system preference (`prefers-color-scheme`)
-- SEO: OpenGraph, Twitter cards, JSON-LD Person schema, canonical URL
-- Print styles, reduced-motion support
-- Auto-updating copyright year
+## Design tokens
+All colors defined as CSS custom properties on `:root` (light) and overridden on `.dark`. Use `var(--ink)`, `var(--bg)`, `var(--hairline)`, etc. — never hardcode colors. Fonts via `var(--font-display)` and `var(--font-sans)`.
 
-## Theming (src/styles/globals.css)
-Uses shadcn Tailwind v4 pattern:
-- `:root` / `.dark` define CSS variables
-- `@theme inline` maps them to Tailwind utilities
-- `@custom-variant dark` enables class-based dark mode
-- Custom animations: `fade-in`, `fade-in-up`, `slide-in-left`, `bounce-arrow`
+| Token | Light | Dark |
+|---|---|---|
+| `--bg` | `oklch(98.5% 0.004 80)` warm off-white | `oklch(15% 0.005 80)` |
+| `--ink` / `--ink-2/3/4` | progressive grays toward warm cream | inverted |
+| `--hairline` | subtle separator | subtle separator |
+| `--status` | green pulse for "current" roles | brighter green |
 
-## Dark Mode
-- Inline `<script is:inline>` in `<head>` adds `.dark` class before render (no flash)
-- `<script>` at end of body listens for `change` events on `matchMedia`
-- Tailwind `dark:` variant via `@custom-variant dark (&:where(.dark, .dark *))`
-- Both pages implement dark mode independently (no shared layout)
-
-## Color Palette
-| Variable | Light | Dark |
-|----------|-------|------|
-| --background | #f5ede0 (cream) | #2d2825 (charcoal) |
-| --foreground | #0d0d0d | #f0ede8 |
-| --muted-foreground | #6b5e50 | #a8998d |
-| --border | #e8ddd0 | #4a4035 |
-| --accent-green | #4caf50 | #4caf50 |
+## Theme behavior
+1. Inline script in `<head>` of `index.astro` and `404.astro` reads `prefers-color-scheme` and applies `.dark` + `data-theme="dark"` before paint (no flash).
+2. Listener syncs OS theme changes.
+3. `ThemeToggle` button in tab bar lets the user override; toggles both `.dark` class and `data-theme` attribute.
 
 ## Social Links
+- Email: erikrole@gmail.com
 - Instagram: https://www.instagram.com/erikrole/
 - X/Twitter: https://x.com/ErikRole
 - LinkedIn: https://www.linkedin.com/in/erikrole/
-- Email: erikrole@gmail.com
+
+## Resume data
+Hardcoded in `Site.tsx` — `EXPERIENCE` array. Edit there to update roles. `current: true` shows the pulsing status dot. `type: "Freelance"` etc. shows a small pill next to the org name.
 
 ## Deployment
-Cloudflare Pages via wrangler.toml. Build creates `dist/`, which is the asset directory.
+Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 
 ## Rules
 - Read files before editing
-- Support both light and dark modes when changing styles
-- Use Tailwind utilities and CSS variables, not hardcoded colors
-- React components go in `src/components/`, shadcn primitives in `src/components/ui/`
-- Keep page-level concerns (SEO, scroll behavior, dark mode script) in `.astro` files
-- Images go in `public/img/`, referenced as `/img/filename.ext`
+- Light + dark must both look right when changing styles
+- Use CSS custom properties (`var(--ink)`, `var(--bg)`, etc.), not hardcoded colors
+- Keep page-level concerns (SEO, theme bootstrap, OG meta) in `.astro` files; behavior + state in `Site.tsx`
+- Images go in `public/img/`, fonts in `public/fonts/`
+- Don't reintroduce Tailwind, shadcn, or component libraries — the site uses plain CSS by design
 
 ## Workflow Guidelines
 - Enter plan mode for non-trivial tasks (3+ steps)
 - If something goes wrong, stop and re-plan
 - Verify changes work before marking complete (`npm run build`)
 - After corrections, update this file with lessons learned
-- Use subagents for research to keep main context clean
 
-*Last updated: 2026-03-20*
+*Last updated: 2026-05-04*

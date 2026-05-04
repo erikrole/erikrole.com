@@ -1,13 +1,11 @@
 ---
 import '@/styles/globals.css';
-import { ProfilePhoto } from '@/components/ProfilePhoto';
-import { SocialLinks } from '@/components/SocialLinks';
-import { ResumeList } from '@/components/ResumeList';
+import { Site } from '@/components/Site';
 
 const siteUrl = "https://erikrole.com";
-const pageTitle = "Erik Role";
+const pageTitle = "Erik Role — Assistant Director of Creative Video";
 const pageDescription =
-    "Assistant Director of Creative Video at Wisconsin Badgers";
+    "Creative video producer leading visual storytelling for Wisconsin Men's Basketball.";
 const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.webp";
 const canonicalUrl = `${siteUrl}/`;
 const socialImageUrl = `${siteUrl}${socialImage}`;
@@ -35,22 +33,6 @@ const personSchema = {
         "In-Venue Production",
         "Brand Strategy",
     ],
-    hasOccupation: [
-        {
-            "@type": "Occupation",
-            name: "Assistant Director of Creative Video",
-            occupationLocation: { "@type": "Place", name: "Madison, WI" },
-            description: "Leading creative video production for Wisconsin Men's Basketball",
-            employer: { "@type": "SportsOrganization", name: "Wisconsin Badgers", url: "https://uwbadgers.com" },
-        },
-        {
-            "@type": "Occupation",
-            name: "Videoboard Content Creator",
-            occupationLocation: { "@type": "Place", name: "Milwaukee, WI" },
-            description: "Creating videoboard content for Milwaukee Bucks game-day productions",
-            employer: { "@type": "SportsOrganization", name: "Milwaukee Bucks", url: "https://www.nba.com/bucks" },
-        },
-    ],
     sameAs: [
         "https://www.linkedin.com/in/erikrole/",
         "https://www.instagram.com/erikrole/",
@@ -60,13 +42,13 @@ const personSchema = {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" style="color-scheme: light dark;">
+<html lang="en" class="scroll-smooth" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#2d2825" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5efe2" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#221f1c" media="(prefers-color-scheme: dark)">
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription}>
     <meta name="author" content="Erik Role">
@@ -77,10 +59,10 @@ const personSchema = {
     <meta property="og:title" content={pageTitle}>
     <meta property="og:description" content={pageDescription}>
     <meta property="og:image" content={socialImageUrl}>
-
-    <meta name="robots" content="index,follow,max-image-preview:large">
     <meta property="og:site_name" content="Erik Role">
     <meta property="og:locale" content="en_US">
+
+    <meta name="robots" content="index,follow,max-image-preview:large">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={pageTitle}>
@@ -93,124 +75,26 @@ const personSchema = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></noscript>
+
+    <link rel="preload" as="font" href="/fonts/abril-fatface-400.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/darker-grotesque.woff2" type="font/woff2" crossorigin>
 
     <script is:inline>
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
         }
     </script>
 </head>
-<body class="overflow-x-hidden animate-fade-in md:min-h-screen md:flex md:flex-col">
-    <div class="container max-w-[640px] mx-auto px-6 py-10 pb-20 max-md:min-h-[calc(100vh-88px)] max-md:flex max-md:flex-col max-md:justify-center max-md:px-5 max-md:pt-[60px] max-md:pb-5 md:flex-1 md:flex md:flex-col md:justify-center">
-
-        <!-- Profile Section -->
-        <div id="about" class="profile text-center mb-10 md:static print:!static print:!p-0 print:!bg-transparent print:!backdrop-blur-none print:mb-6">
-            <div class="animate-fade-in-up">
-                <ProfilePhoto client:load />
-            </div>
-            <h1 class="font-heading text-[clamp(48px,8vw,72px)] font-normal mb-3 tracking-wide leading-[1.1] animate-fade-in-up [animation-delay:100ms] print:!text-[32px] print:!transform-none">Erik Role</h1>
-            <p class="title text-sm text-muted-foreground font-medium uppercase tracking-[0.15em] animate-fade-in-up [animation-delay:200ms] print:!text-sm print:!transform-none">
-                Assistant Director of Creative Video / Wisconsin Badgers
-            </p>
-        </div>
-
-        <!-- Bio & Social Links -->
-        <div class="initial-content text-center mb-10 print:!opacity-100 print:!transform-none print:mb-6">
-            <p class="text-[15px] leading-relaxed text-foreground mb-6 max-w-[480px] mx-auto tracking-wide animate-fade-in-up [animation-delay:300ms] print:text-sm">
-                Creative video producer leading visual storytelling for Wisconsin Men's Basketball.
-                Specializing in social-first content, in-venue production, and brand strategy.
-            </p>
-            <div class="animate-fade-in-up [animation-delay:400ms] print:hidden">
-                <SocialLinks client:load />
-            </div>
-        </div>
-
-        <!-- Scroll sentinel: observed by IntersectionObserver to trigger reveal -->
-        <div id="scroll-sentinel" class="h-0 w-0 md:hidden" aria-hidden="true"></div>
-
-        <!-- Resume Section -->
-        <div id="resume" class="resume-section mt-12 print:!opacity-100 print:!transform-none print:mt-6">
-            <h2 class="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6 text-center font-semibold">Experience</h2>
-            <ResumeList client:visible />
-        </div>
-
-        <!-- Scroll Indicator (mobile only) -->
-        <a href="#resume" class="scroll-indicator fixed bottom-[calc(40px+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 text-muted-foreground transition-opacity duration-300 cursor-pointer no-underline block md:hidden print:!hidden" aria-label="Scroll to see resume">
-            <svg class="w-6 h-6 animate-bounce-arrow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
-        </a>
-    </div>
-
-    <footer class="text-center py-6 px-6 pb-10 text-[13px] text-muted-foreground sticky bottom-0 bg-background print:!static print:mt-8 print:p-0 print:pt-4 print:border-t print:border-border">
-        &copy; <span id="year"></span> Erik Role
-    </footer>
+<body>
+    <Site client:load />
 
     <script>
-        // Year
-        document.getElementById('year')!.textContent = String(new Date().getFullYear());
-
-        // Dark mode sync
         const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
         darkModeQuery.addEventListener('change', (e) => {
             document.documentElement.classList.toggle('dark', e.matches);
+            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
         });
-
-        // Mobile scroll reveal via IntersectionObserver
-        const profile = document.querySelector('.profile');
-        const initialContent = document.querySelector('.initial-content');
-        const resumeSection = document.querySelector('.resume-section');
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        const scrollSentinel = document.getElementById('scroll-sentinel');
-        const mobileQuery = window.matchMedia('(max-width: 768px)');
-
-        function setResumeVisible(isVisible: boolean) {
-            profile?.classList.toggle('scrolled', isVisible);
-            initialContent?.classList.toggle('faded', isVisible);
-            resumeSection?.classList.toggle('visible', isVisible);
-            if (scrollIndicator) {
-                scrollIndicator.classList.toggle('opacity-0', isVisible || !mobileQuery.matches);
-                scrollIndicator.classList.toggle('pointer-events-none', isVisible || !mobileQuery.matches);
-            }
-        }
-
-        let observer: IntersectionObserver | null = null;
-
-        function setupObserver() {
-            observer?.disconnect();
-
-            if (!mobileQuery.matches) {
-                setResumeVisible(true);
-                return;
-            }
-
-            setResumeVisible(false);
-
-            // Observe a sentinel element placed between bio and resume.
-            // rootMargin shrinks the observed viewport so the sentinel
-            // "leaves" early — triggering the reveal after a small scroll.
-            observer = new IntersectionObserver(
-                (entries) => {
-                    for (const entry of entries) {
-                        setResumeVisible(!entry.isIntersecting);
-                    }
-                },
-                { rootMargin: '-30% 0px -70% 0px' }
-            );
-
-            if (scrollSentinel) {
-                observer.observe(scrollSentinel);
-            }
-        }
-
-        mobileQuery.addEventListener('change', setupObserver);
-        window.addEventListener('pageshow', setupObserver);
-
-        setupObserver();
     </script>
 </body>
 </html>
