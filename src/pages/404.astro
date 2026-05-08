@@ -21,15 +21,23 @@ const pageDescription = "Page not found";
     <link rel="apple-touch-icon" href="/favicon.svg">
 
     <script is:inline>
-        var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        if (darkQuery.matches) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-        darkQuery.addEventListener('change', function(e) {
-            document.documentElement.classList.toggle('dark', e.matches);
-            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-        });
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (e) {}
+            var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            var dark = stored ? stored === 'dark' : darkQuery.matches;
+            if (dark) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            darkQuery.addEventListener('change', function (e) {
+                var saved = null;
+                try { saved = localStorage.getItem('theme'); } catch (err) {}
+                if (saved) return;
+                document.documentElement.classList.toggle('dark', e.matches);
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            });
+        })();
     </script>
 
     <style>

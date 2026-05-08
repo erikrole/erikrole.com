@@ -8,10 +8,10 @@ const PROFILE = {
 }
 
 const SOCIALS = [
-  { id: "email", label: "Email", href: "mailto:erikrole@gmail.com" },
-  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/erikrole/", external: true },
-  { id: "x", label: "X", href: "https://x.com/ErikRole", external: true },
-  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/erikrole/", external: true },
+  { icon: "email", label: "Email", href: "mailto:erikrole@gmail.com" },
+  { icon: "instagram", label: "Instagram", href: "https://www.instagram.com/erikrole/", external: true },
+  { icon: "x", label: "X", href: "https://x.com/ErikRole", external: true },
+  { icon: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/erikrole/", external: true },
 ]
 
 type Role = {
@@ -140,15 +140,22 @@ function ThemeToggle() {
     if (typeof document === "undefined") return false
     return document.documentElement.classList.contains("dark")
   })
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark)
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light")
-  }, [dark])
+  const onToggle = () => {
+    setDark((prev) => {
+      const next = !prev
+      document.documentElement.classList.toggle("dark", next)
+      document.documentElement.setAttribute("data-theme", next ? "dark" : "light")
+      try {
+        localStorage.setItem("theme", next ? "dark" : "light")
+      } catch {}
+      return next
+    })
+  }
   return (
     <button
       type="button"
       className="theme-toggle"
-      onClick={() => setDark((d) => !d)}
+      onClick={onToggle}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       title={dark ? "Light mode" : "Dark mode"}
     >
@@ -159,6 +166,14 @@ function ThemeToggle() {
 
 const cssVar = (k: string, v: string): CSSProperties => ({ [k]: v } as CSSProperties)
 
+const TABS = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+] as const
+
+const tabId = (id: string) => `tab-${id}`
+const panelId = (id: string) => `panel-${id}`
+
 function TabBar({
   active,
   onChange,
@@ -166,10 +181,6 @@ function TabBar({
   active: string
   onChange: (id: string) => void
 }) {
-  const tabs = [
-    { id: "about", label: "About" },
-    { id: "experience", label: "Experience" },
-  ]
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -178,31 +189,29 @@ function TabBar({
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
   const onKeyDown = (e: React.KeyboardEvent) => {
-    const i = tabs.findIndex((t) => t.id === active)
+    const i = TABS.findIndex((t) => t.id === active)
     if (e.key === "ArrowRight" || e.key === "ArrowDown") {
       e.preventDefault()
-      onChange(tabs[(i + 1) % tabs.length].id)
+      onChange(TABS[(i + 1) % TABS.length].id)
     } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
       e.preventDefault()
-      onChange(tabs[(i - 1 + tabs.length) % tabs.length].id)
+      onChange(TABS[(i - 1 + TABS.length) % TABS.length].id)
     }
   }
   return (
-    <nav
-      className={`tabbar tabbar-top ${scrolled ? "scrolled" : ""}`}
-      role="tablist"
-      onKeyDown={onKeyDown}
-    >
+    <nav className={`tabbar tabbar-top ${scrolled ? "scrolled" : ""}`}>
       <div className="tabbar-mark">
         <span className="tabbar-mark-dot" />
         <span className="tabbar-mark-text">erikrole</span>
       </div>
-      <div className="tabbar-tabs">
-        {tabs.map((t) => (
+      <div className="tabbar-tabs" role="tablist" onKeyDown={onKeyDown}>
+        {TABS.map((t) => (
           <button
             key={t.id}
+            id={tabId(t.id)}
             role="tab"
             aria-selected={active === t.id}
+            aria-controls={panelId(t.id)}
             tabIndex={active === t.id ? 0 : -1}
             className={`tabbar-tab ${active === t.id ? "is-active" : ""}`}
             onClick={() => onChange(t.id)}
@@ -227,6 +236,8 @@ function About() {
               alt="Erik Role"
               width={120}
               height={120}
+              decoding="async"
+              fetchPriority="high"
             />
           </div>
         </div>
@@ -248,7 +259,7 @@ function About() {
 
       <ul className="socials reveal-item" style={cssVar("--d", "340ms")}>
         {SOCIALS.map((s) => (
-          <li key={s.id}>
+          <li key={s.icon}>
             <a
               href={s.href}
               className="social"
@@ -257,7 +268,7 @@ function About() {
               rel={s.external ? "noopener me" : undefined}
             >
               <span className="social-icon">
-                <Icon name={s.id} size={16} />
+                <Icon name={s.icon} size={16} />
               </span>
               <span className="social-label">{s.label}</span>
             </a>
@@ -347,16 +358,17 @@ function Experience() {
 
 export function Site() {
   const [active, setActive] = useState<"about" | "experience">("about")
-  const [pageKey, setPageKey] = useState(0)
-
-  useEffect(() => {
-    setPageKey((k) => k + 1)
-  }, [active])
 
   return (
     <div className="app">
       <TabBar active={active} onChange={(id) => setActive(id as "about" | "experience")} />
-      <main className="stage" key={pageKey}>
+      <main
+        key={active}
+        id={panelId(active)}
+        role="tabpanel"
+        aria-labelledby={tabId(active)}
+        className="stage"
+      >
         {active === "about" ? <About /> : <Experience />}
       </main>
       <footer className="foot">
