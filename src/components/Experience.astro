@@ -1,0 +1,38 @@
+---
+import { EXPERIENCE, EXPERIENCE_SPAN } from '@/data/experience';
+
+const roleCount = String(EXPERIENCE.length).padStart(2, '0');
+---
+
+<section class="section" id="experience" aria-labelledby="experience-label">
+    <div class="section-head">
+        <h2 class="section-label" id="experience-label">Experience</h2>
+        <span class="section-meta">{roleCount} roles / {EXPERIENCE_SPAN}</span>
+    </div>
+    <ol class="xp-list">
+        {EXPERIENCE.map((item) => (
+            <li class="xp">
+                <div class="xp-when">
+                    <span class="xp-years">
+                        {item.start} —{' '}
+                        {item.current ? (
+                            <span class="xp-now">
+                                <span class="xp-now-dot" aria-hidden="true"></span>
+                                Now
+                            </span>
+                        ) : (
+                            item.end
+                        )}
+                    </span>
+                    {item.type && <span class="xp-type">{item.type}</span>}
+                    {item.stat && <span class="xp-stat">{item.stat}</span>}
+                </div>
+                <div class="xp-what">
+                    <h3 class="xp-role">{item.role}</h3>
+                    <p class="xp-org">{item.org}</p>
+                    <p class="xp-desc">{item.description}</p>
+                </div>
+            </li>
+        ))}
+    </ol>
+</section>

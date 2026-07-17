@@ -1,0 +1,20 @@
+---
+import Icon from '@/components/Icon.astro';
+---
+
+<header class="topbar" id="topbar">
+    <div class="topbar-inner">
+        <a href="#top" class="mark">
+            <span class="mark-dot" aria-hidden="true"></span>
+            <span>Erik Role</span>
+        </a>
+        <nav class="topnav" aria-label="Sections">
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <span class="theme-toggle-sun"><Icon name="sun" size={15} /></span>
+            <span class="theme-toggle-moon"><Icon name="moon" size={15} /></span>
+        </button>
+    </div>
+</header>

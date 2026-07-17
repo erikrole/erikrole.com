@@ -1,0 +1,41 @@
+---
+import Icon from '@/components/Icon.astro';
+import { PROFILE, SOCIALS } from '@/data/site';
+---
+
+<section class="section about" id="about" aria-labelledby="about-label">
+    <div class="section-head">
+        <h2 class="section-label" id="about-label">About</h2>
+        <span class="section-meta">{PROFILE.location}</span>
+    </div>
+    <div class="about-grid">
+        <figure class="portrait">
+            <img
+                src="/img/20240731-240731MBB-3329-Role-Edit.webp"
+                alt="Erik Role"
+                width="640"
+                height="800"
+                loading="lazy"
+            />
+            <figcaption>Role, Erik — {PROFILE.org}</figcaption>
+        </figure>
+        <div class="about-body">
+            <p class="bio">{PROFILE.bio}</p>
+            <ul class="socials">
+                {SOCIALS.map((s) => (
+                    <li>
+                        <a
+                            href={s.href}
+                            class="social"
+                            target={s.external ? "_blank" : undefined}
+                            rel={s.external ? "noopener me" : undefined}
+                        >
+                            <Icon name={s.id} size={15} />
+                            <span>{s.label}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </div>
+</section>

@@ -11,8 +11,8 @@ const pageDescription = "Page not found";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f5efe2" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#221f1c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#101114" media="(prefers-color-scheme: dark)">
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription}>
     <meta name="robots" content="noindex">
@@ -21,66 +21,121 @@ const pageDescription = "Page not found";
     <link rel="apple-touch-icon" href="/favicon.svg">
 
     <script is:inline>
-        var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        if (darkQuery.matches) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-        darkQuery.addEventListener('change', function(e) {
-            document.documentElement.classList.toggle('dark', e.matches);
-            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-        });
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (e) {}
+            var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            var apply = function (dark) {
+                document.documentElement.classList.toggle('dark', dark);
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            };
+            apply(stored ? stored === 'dark' : darkQuery.matches);
+            darkQuery.addEventListener('change', function (e) {
+                var s = null;
+                try { s = localStorage.getItem('theme'); } catch (err) {}
+                if (!s) apply(e.matches);
+            });
+        })();
     </script>
 
     <style>
         .nf {
-            min-height: 100vh;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: min(100% - 2 * var(--gutter), var(--shell));
+            margin-inline: auto;
+        }
+        .nf-eyebrow {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
-            animation: fade 480ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+            gap: 12px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+            margin: 0 0 20px;
         }
-        .nf-inner { max-width: 460px; }
+        .nf-eyebrow::before {
+            content: "";
+            width: 8px; height: 8px;
+            background: var(--accent);
+        }
         .nf-code {
             font-family: var(--font-display);
-            font-size: clamp(72px, 14vw, 112px);
+            font-size: clamp(7rem, 26vw, 20rem);
             font-weight: 400;
-            line-height: 1;
-            margin: 0 0 16px;
-            letter-spacing: -0.02em;
+            line-height: 0.9;
+            letter-spacing: 0.01em;
+            margin: 0 0 36px;
             color: var(--ink);
         }
-        .nf-msg {
-            font-family: var(--font-sans);
-            font-size: 16px;
-            color: var(--ink-3);
-            margin: 0 0 32px;
-            line-height: 1.55;
-        }
-        .nf-btn {
-            display: inline-block;
-            padding: 12px 22px;
+        .nf-third {
+            display: inline-flex;
+            align-items: stretch;
+            width: fit-content;
+            max-width: 100%;
             background: var(--ink);
             color: var(--bg);
-            border-radius: 8px;
-            font-family: var(--font-sans);
-            font-weight: 600;
-            font-size: 14px;
-            transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), background 200ms ease;
         }
-        .nf-btn:hover { transform: translateY(-1px); background: var(--ink-2); }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        .nf-third-bar { width: 6px; background: var(--lt-accent); flex-shrink: 0; }
+        .nf-third-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 14px 22px 15px 18px;
+        }
+        .nf-third-primary {
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 650;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            line-height: 1.25;
+        }
+        .nf-third-secondary {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: oklch(from var(--bg) l c h / 0.62);
+        }
+        .nf-back {
+            display: inline-flex;
+            width: fit-content;
+            margin-top: 40px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+            transition: color 200ms ease;
+        }
+        .nf-back:hover {
+            color: var(--ink);
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 6px;
+        }
     </style>
 </head>
 <body>
     <main class="nf">
-        <div class="nf-inner">
-            <h1 class="nf-code">404</h1>
-            <p class="nf-msg">Page not found. The link may be broken, or the page has moved.</p>
-            <a href="/" class="nf-btn">Go home</a>
+        <p class="nf-eyebrow">Signal lost</p>
+        <h1 class="nf-code">404</h1>
+        <div class="nf-third">
+            <span class="nf-third-bar" aria-hidden="true"></span>
+            <div class="nf-third-text">
+                <span class="nf-third-primary">This page is off the air</span>
+                <span class="nf-third-secondary">The link may be broken, or the page has moved</span>
+            </div>
         </div>
+        <a href="/" class="nf-back">← Back to erikrole.com</a>
     </main>
 </body>
 </html>

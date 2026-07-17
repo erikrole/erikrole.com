@@ -1,0 +1,11 @@
+---
+import { PROFILE } from '@/data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+    <span>© {year} Erik Role</span>
+    <span class="foot-coords">{PROFILE.coordinates}</span>
+    <span>{PROFILE.location}</span>
+</footer>

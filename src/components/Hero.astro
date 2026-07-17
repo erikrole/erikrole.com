@@ -1,0 +1,56 @@
+---
+import { PROFILE } from '@/data/site';
+import { EXPERIENCE } from '@/data/experience';
+
+const [firstName, lastName] = PROFILE.name.split(' ');
+
+// One line per organization: first season → last (or Now), across all roles there.
+type Client = { org: string; start: number; end: number; current: boolean };
+const clients: Client[] = [];
+for (const role of EXPERIENCE) {
+    let c = clients.find((c) => c.org === role.org);
+    if (!c) {
+        c = { org: role.org, start: Number(role.start), end: 0, current: false };
+        clients.push(c);
+    }
+    c.start = Math.min(c.start, Number(role.start));
+    if (role.current) c.current = true;
+    else c.end = Math.max(c.end, Number(role.end));
+}
+---
+
+<section class="hero" id="top" aria-label="Introduction">
+    <div class="hero-main">
+        <p class="hero-eyebrow reveal" style="--d: 0ms">
+            <span class="hero-eyebrow-square" aria-hidden="true"></span>
+            Creative video producer — {PROFILE.location}
+        </p>
+        <h1 class="hero-name">
+            <span class="hero-name-line"><span class="hero-name-text" style="--d: 80ms">{firstName}</span></span>
+            <span class="hero-name-line"><span class="hero-name-text" style="--d: 180ms">{lastName}</span></span>
+        </h1>
+        <div class="lower-third" style="--d: 480ms">
+            <span class="lt-bar" aria-hidden="true"></span>
+            <div class="lt-text">
+                <span class="lt-primary">{PROFILE.title}</span>
+                <span class="lt-secondary">{PROFILE.org}</span>
+            </div>
+            <span class="lt-live">
+                <span class="lt-live-dot" aria-hidden="true"></span>
+                Now
+            </span>
+        </div>
+    </div>
+    <aside class="hero-clients reveal" style="--d: 720ms" aria-label="Produced for">
+        <h2 class="hero-clients-label">Produced for</h2>
+        <ul class="hero-clients-list">
+            {clients.map((c) => (
+                <li>
+                    <span class="hc-org">{c.org}</span>
+                    <span class="hc-years">{c.start} — {c.current ? 'Now' : c.end}</span>
+                </li>
+            ))}
+        </ul>
+    </aside>
+    <p class="hero-scroll reveal" style="--d: 900ms" aria-hidden="true">Scroll ↓</p>
+</section>

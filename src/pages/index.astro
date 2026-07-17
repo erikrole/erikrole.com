@@ -1,9 +1,14 @@
 ---
-import '@/styles/globals.css';
-import { Site } from '@/components/Site';
+import Layout from '@/layouts/Layout.astro';
+import TopBar from '@/components/TopBar.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import Experience from '@/components/Experience.astro';
+import Footer from '@/components/Footer.astro';
+import { PROFILE } from '@/data/site';
 
 const siteUrl = "https://erikrole.com";
-const pageTitle = "Erik Role — Assistant Director of Creative Video";
+const pageTitle = `${PROFILE.name} — ${PROFILE.title}`;
 const pageDescription =
     "Creative video producer leading visual storytelling for Wisconsin Men's Basketball.";
 const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.webp";
@@ -13,10 +18,10 @@ const socialImageUrl = `${siteUrl}${socialImage}`;
 const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Erik Role",
+    name: PROFILE.name,
     url: canonicalUrl,
     image: socialImageUrl,
-    jobTitle: "Assistant Director of Creative Video",
+    jobTitle: PROFILE.title,
     worksFor: {
         "@type": "SportsOrganization",
         name: "Wisconsin Badgers",
@@ -41,60 +46,19 @@ const personSchema = {
 };
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f5efe2" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#221f1c" media="(prefers-color-scheme: dark)">
-    <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription}>
-    <meta name="author" content="Erik Role">
-    <link rel="canonical" href={canonicalUrl}>
+<Layout
+    title={pageTitle}
+    description={pageDescription}
+    canonicalUrl={canonicalUrl}
+    socialImageUrl={socialImageUrl}
+>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
 
-    <meta property="og:type" content="website">
-    <meta property="og:url" content={canonicalUrl}>
-    <meta property="og:title" content={pageTitle}>
-    <meta property="og:description" content={pageDescription}>
-    <meta property="og:image" content={socialImageUrl}>
-    <meta property="og:site_name" content="Erik Role">
-    <meta property="og:locale" content="en_US">
-
-    <meta name="robots" content="index,follow,max-image-preview:large">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content={pageTitle}>
-    <meta name="twitter:description" content={pageDescription}>
-    <meta name="twitter:image" content={socialImageUrl}>
-    <meta name="twitter:site" content="@ErikRole">
-    <meta name="twitter:creator" content="@ErikRole">
-
-    <script type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/favicon.svg">
-
-    <link rel="preload" as="font" href="/fonts/abril-fatface-400.woff2" type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="/fonts/darker-grotesque.woff2" type="font/woff2" crossorigin>
-
-    <script is:inline>
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-    </script>
-</head>
-<body>
-    <Site client:load />
-
-    <script>
-        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        darkModeQuery.addEventListener('change', (e) => {
-            document.documentElement.classList.toggle('dark', e.matches);
-            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-        });
-    </script>
-</body>
-</html>
+    <TopBar />
+    <main>
+        <Hero />
+        <About />
+        <Experience />
+    </main>
+    <Footer />
+</Layout>

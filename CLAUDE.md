@@ -1,15 +1,15 @@
 # CLAUDE.md - Erik Role Personal Website
 
 ## Overview
-Personal landing page for Erik Role — a refined minimal site with a tabbed About / Experience layout. Built with Astro 6 + a single React island. Hand-rolled CSS using design tokens (no Tailwind, no component library). Deployed to Cloudflare Pages.
+Personal landing page for Erik Role — a single scrolling page with a broadcast/videoboard aesthetic: giant condensed display type, a broadcast "lower-third" hero signature, and a rundown-sheet experience list. Built with Astro 6, zero client frameworks (no React), hand-rolled CSS with design tokens. Deployed to Cloudflare Pages.
 
 **URL**: https://erikrole.com
 
 ## Tech Stack
-- **Framework**: Astro 6.x (static SSG) with one React island
-- **UI**: Plain React + plain CSS (no Tailwind, no shadcn, no Radix)
-- **Styling**: CSS custom properties in `src/styles/globals.css` — `oklch()` color tokens, light + dark themes
-- **Fonts**: Self-hosted Abril Fatface (display) + Darker Grotesque (body), served from `/fonts/`
+- **Framework**: Astro 6.x (static SSG), no UI framework — all `.astro` components
+- **Styling**: Plain CSS custom properties in `src/styles/globals.css` — `oklch()` color tokens, light + dark themes (no Tailwind, no shadcn, no Radix)
+- **Fonts**: Self-hosted from `/fonts/` — Anton (display), Archivo variable 400–700 (body), IBM Plex Mono 400/500 (utility/labels)
+- **Client JS**: Two tiny inlined scripts in `Layout.astro` (theme bootstrap + toggle/scroll listeners). No framework bundle ships.
 - **Deployment**: Cloudflare Pages (`wrangler.toml`, output dir `dist/`)
 - **CI**: GitHub Actions runs `npm run build` on push/PR (`.github/workflows/build.yml`)
 
@@ -17,19 +17,29 @@ Personal landing page for Erik Role — a refined minimal site with a tabbed Abo
 ```
 /
 ├── public/
-│   ├── fonts/                  # Self-hosted woff2 (Abril Fatface, Darker Grotesque)
-│   ├── img/                    # Headshot, brand logos
-│   ├── favicon.svg / favicon.ico
+│   ├── fonts/                  # anton-400, archivo-var, ibm-plex-mono-400/500 (woff2)
+│   ├── img/                    # Headshot, brand logos (logos currently unused)
+│   ├── favicon.svg             # Cardinal square + "ER"
 │   └── robots.txt
 ├── src/
+│   ├── data/
+│   │   ├── site.ts             # PROFILE + SOCIALS (typed)
+│   │   └── experience.ts       # EXPERIENCE roles + EXPERIENCE_SPAN (typed)
+│   ├── layouts/
+│   │   └── Layout.astro        # Document shell: meta/OG, fonts, theme bootstrap, toggle+scroll scripts
 │   ├── components/
-│   │   └── Site.tsx            # Single React island: TabBar + About + Experience + ThemeToggle
+│   │   ├── TopBar.astro        # Fixed bar: wordmark, anchor nav, theme toggle
+│   │   ├── Hero.astro          # Giant stacked name + lower-third signature
+│   │   ├── About.astro         # Portrait + bio + socials
+│   │   ├── Experience.astro    # Rundown-sheet role list
+│   │   ├── Footer.astro
+│   │   └── Icon.astro          # Inline SVG icons (socials, sun/moon)
 │   ├── styles/
-│   │   └── globals.css         # All design tokens, layout, components, print, reduced-motion
+│   │   └── globals.css         # All tokens, layout, components, motion, print
 │   └── pages/
-│       ├── index.astro         # Mounts <Site client:load />
-│       └── 404.astro           # Standalone, scoped <style>, no shared layout
-├── astro.config.mjs            # Astro + @astrojs/react + @astrojs/sitemap
+│       ├── index.astro         # SEO payload (JSON-LD) + composes components
+│       └── 404.astro           # Standalone "SIGNAL LOST" page, scoped <style>
+├── astro.config.mjs            # Astro + @astrojs/sitemap
 ├── tsconfig.json               # @/* path aliases
 ├── wrangler.toml               # Cloudflare Pages config
 └── package.json
@@ -43,28 +53,31 @@ npm run preview  # Preview production build
 ```
 
 ## Architecture
-The whole interactive UI is one island: `Site.tsx` is mounted with `client:load` from `index.astro`. It owns:
-- Tab state (About / Experience)
-- Scroll-based tab-bar shadow
-- Expand/collapse state for experience rows
-- Theme toggle (writes `.dark` class + `data-theme` to `<html>`)
+Fully static — no islands. Interactivity is two small scripts in `Layout.astro`:
+1. Inline `is:inline` script in `<head>`: reads `localStorage.theme` override, falls back to `prefers-color-scheme`, applies `.dark` + `data-theme` before paint.
+2. Bundled (inlined by Astro) script before `</body>`: theme toggle click handler (persists override to localStorage), OS-theme change listener (only when no override), topbar scrolled-state class.
 
-The 404 page is fully standalone with inline `<style>` — no React, no shared layout, no dependencies on Site.tsx.
+Scroll reveals for below-the-fold content use CSS scroll-driven animations (`animation-timeline: view()`) behind `@supports` — browsers without support just show content.
+
+The 404 page is standalone (imports globals.css for tokens, own scoped styles, own theme bootstrap) — no dependency on Layout/components.
 
 ## Design tokens
-All colors defined as CSS custom properties on `:root` (light) and overridden on `.dark`. Use `var(--ink)`, `var(--bg)`, `var(--hairline)`, etc. — never hardcode colors. Fonts via `var(--font-display)` and `var(--font-sans)`.
+All colors as CSS custom properties on `:root` (light — "printed game program") and `.dark` (dark — "arena, lights down"). Use `var(--ink)`, `var(--bg)`, `var(--accent)`, `var(--hairline)`, etc. — never hardcode colors.
 
 | Token | Light | Dark |
 |---|---|---|
-| `--bg` | `oklch(98.5% 0.004 80)` warm off-white | `oklch(15% 0.005 80)` |
-| `--ink` / `--ink-2/3/4` | progressive grays toward warm cream | inverted |
-| `--hairline` | subtle separator | subtle separator |
-| `--status` | green pulse for "current" roles | brighter green |
+| `--bg` | `oklch(97.5% 0.003 250)` cool paper | `oklch(13.5% 0.006 260)` arena charcoal |
+| `--ink` / `--ink-2/3/4` | near-black → grays | near-white → grays |
+| `--accent` | cardinal red `oklch(50% 0.2 27)` | brighter `oklch(60% 0.21 27)` |
+| `--lt-accent` | accent for the inverted lower-third strip (opposite theme's accent) | — |
+| `--shell` / `--gutter` | layout width (1080px) and side padding | same |
+
+Type roles: `--font-display` (Anton, always uppercase), `--font-sans` (Archivo), `--font-mono` (IBM Plex Mono, uppercase + letterspaced for labels/dates/nav).
 
 ## Theme behavior
-1. Inline script in `<head>` of `index.astro` and `404.astro` reads `prefers-color-scheme` and applies `.dark` + `data-theme="dark"` before paint (no flash).
-2. Listener syncs OS theme changes.
-3. `ThemeToggle` button in tab bar lets the user override; toggles both `.dark` class and `data-theme` attribute.
+1. Inline script in `<head>` (Layout.astro and 404.astro) applies `.dark` + `data-theme` before paint: localStorage override wins, else OS preference.
+2. OS theme changes sync live only when the user hasn't set an override.
+3. `#theme-toggle` button in TopBar toggles and persists to `localStorage.theme`.
 
 ## Social Links
 - Email: erikrole@gmail.com
@@ -73,7 +86,7 @@ All colors defined as CSS custom properties on `:root` (light) and overridden on
 - LinkedIn: https://www.linkedin.com/in/erikrole/
 
 ## Resume data
-Hardcoded in `Site.tsx` — `EXPERIENCE` array. Edit there to update roles. `current: true` shows the pulsing status dot. `type: "Freelance"` etc. shows a small pill next to the org name.
+Typed data lives in `src/data/experience.ts` (`EXPERIENCE` array) and `src/data/site.ts` (`PROFILE`, `SOCIALS`). `current: true` shows the pulsing red "NOW" indicator; `type: "Freelance"` etc. shows a small pill under the dates.
 
 ## Deployment
 Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
@@ -82,9 +95,10 @@ Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 - Read files before editing
 - Light + dark must both look right when changing styles
 - Use CSS custom properties (`var(--ink)`, `var(--bg)`, etc.), not hardcoded colors
-- Keep page-level concerns (SEO, theme bootstrap, OG meta) in `.astro` files; behavior + state in `Site.tsx`
+- Keep page-level concerns (SEO, theme bootstrap, OG meta) in `Layout.astro`/`.astro` pages; content data in `src/data/`
 - Images go in `public/img/`, fonts in `public/fonts/`
-- Don't reintroduce Tailwind, shadcn, or component libraries — the site uses plain CSS by design
+- Don't reintroduce Tailwind, shadcn, component libraries, or a client framework — the site is plain CSS + static Astro by design
+- Anton is display-only and always uppercase; body copy stays in Archivo
 
 ## Workflow Guidelines
 - Enter plan mode for non-trivial tasks (3+ steps)
@@ -92,4 +106,8 @@ Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 - Verify changes work before marking complete (`npm run build`)
 - After corrections, update this file with lessons learned
 
-*Last updated: 2026-05-04*
+## Lessons learned
+- `img` width/height HTML attributes act as presentational hints — when overriding size in CSS with `aspect-ratio`, also set `height: auto` or the attribute height wins.
+- The Claude Code browser pane screenshots black frames when the page is scrolled (`scrollY > 0`). Workaround for visual verification: keep `scrollY` at 0 and `document.body.style.transform = translateY(-Npx)` to bring sections into view (disable `view()`-timeline animations while doing so).
+
+*Last updated: 2026-07-16*

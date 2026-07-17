@@ -1,0 +1,108 @@
+---
+import '@/styles/globals.css';
+
+interface Props {
+    title: string;
+    description: string;
+    /** Absolute URL of the social share image. Omit to skip og:image tags. */
+    socialImageUrl?: string;
+    canonicalUrl?: string;
+    noindex?: boolean;
+}
+
+const { title, description, socialImageUrl, canonicalUrl, noindex = false } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#101114" media="(prefers-color-scheme: dark)">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="author" content="Erik Role">
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl}>}
+    {noindex
+        ? <meta name="robots" content="noindex">
+        : <meta name="robots" content="index,follow,max-image-preview:large">}
+
+    {canonicalUrl && (
+        <>
+            <meta property="og:type" content="website">
+            <meta property="og:url" content={canonicalUrl}>
+            <meta property="og:title" content={title}>
+            <meta property="og:description" content={description}>
+            <meta property="og:site_name" content="Erik Role">
+            <meta property="og:locale" content="en_US">
+        </>
+    )}
+    {socialImageUrl && (
+        <>
+            <meta property="og:image" content={socialImageUrl}>
+            <meta name="twitter:card" content="summary_large_image">
+            <meta name="twitter:title" content={title}>
+            <meta name="twitter:description" content={description}>
+            <meta name="twitter:image" content={socialImageUrl}>
+            <meta name="twitter:site" content="@ErikRole">
+            <meta name="twitter:creator" content="@ErikRole">
+        </>
+    )}
+
+    <slot name="head" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+
+    <link rel="preload" as="font" href="/fonts/anton-400.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/archivo-var.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/ibm-plex-mono-400.woff2" type="font/woff2" crossorigin>
+
+    <script is:inline>
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (e) {}
+            var dark = stored
+                ? stored === 'dark'
+                : window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.classList.toggle('dark', dark);
+            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        })();
+    </script>
+</head>
+<body>
+    <slot />
+
+    <script>
+        const root = document.documentElement;
+
+        const applyTheme = (dark: boolean) => {
+            root.classList.toggle('dark', dark);
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        };
+
+        // OS theme changes follow through unless the user has set an override.
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            let stored = null;
+            try { stored = localStorage.getItem('theme'); } catch {}
+            if (!stored) applyTheme(e.matches);
+        });
+
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+            const dark = !root.classList.contains('dark');
+            applyTheme(dark);
+            try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
+        });
+
+        const topbar = document.getElementById('topbar');
+        if (topbar) {
+            const onScroll = () => topbar.classList.toggle('scrolled', window.scrollY > 8);
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+        }
+    </script>
+</body>
+</html>
