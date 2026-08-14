@@ -1,7 +1,7 @@
 # CLAUDE.md - Erik Role Personal Website
 
 ## Overview
-Personal landing page for Erik Role — a single scrolling page with a broadcast/videoboard aesthetic: giant condensed display type, a broadcast "lower-third" hero signature, and a rundown-sheet experience list. Built with Astro 6, zero client frameworks (no React), hand-rolled CSS with design tokens. Deployed to Cloudflare Pages.
+Personal portfolio for Erik Role — a single scrolling page with a broadcast/videoboard aesthetic: giant condensed display type, a broadcast "lower-third" hero signature, credited selected work, and a rundown-sheet experience list. Built with Astro 6, zero client frameworks (no React), hand-rolled CSS with design tokens. Deployed to Cloudflare Pages.
 
 **URL**: https://erikrole.com
 
@@ -18,18 +18,20 @@ Personal landing page for Erik Role — a single scrolling page with a broadcast
 /
 ├── public/
 │   ├── fonts/                  # anton-400, archivo-var, ibm-plex-mono-400/500 (woff2)
-│   ├── img/                    # Headshot, brand logos (logos currently unused)
 │   ├── favicon.svg             # Cardinal square + "ER"
 │   └── robots.txt
 ├── src/
+│   ├── assets/                 # Imported, optimized, fingerprinted portfolio images
 │   ├── data/
 │   │   ├── site.ts             # PROFILE + SOCIALS (typed)
-│   │   └── experience.ts       # EXPERIENCE roles + EXPERIENCE_SPAN (typed)
+│   │   ├── experience.ts       # EXPERIENCE roles + EXPERIENCE_SPAN (typed)
+│   │   └── work.ts             # Verified external portfolio destination + featured scope
 │   ├── layouts/
 │   │   └── Layout.astro        # Document shell: meta/OG, fonts, theme bootstrap, toggle+scroll scripts
 │   ├── components/
 │   │   ├── TopBar.astro        # Fixed bar: wordmark, anchor nav, theme toggle
 │   │   ├── Hero.astro          # Giant stacked name + lower-third signature
+│   │   ├── SelectedWork.astro  # Featured credited-work gateway
 │   │   ├── About.astro         # Portrait + bio + socials
 │   │   ├── Experience.astro    # Rundown-sheet role list
 │   │   ├── Footer.astro
@@ -57,7 +59,7 @@ Fully static — no islands. Interactivity is two small scripts in `Layout.astro
 1. Inline `is:inline` script in `<head>`: reads `localStorage.theme` override, falls back to `prefers-color-scheme`, applies `.dark` + `data-theme` before paint.
 2. Bundled (inlined by Astro) script before `</body>`: theme toggle click handler (persists override to localStorage), OS-theme change listener (only when no override), topbar scrolled-state class.
 
-Scroll reveals for below-the-fold content use CSS scroll-driven animations (`animation-timeline: view()`) behind `@supports` — browsers without support just show content.
+Motion is reserved for the one-shot hero introduction and interactive state feedback. Below-the-fold portfolio and resume content renders immediately.
 
 The 404 page is standalone (imports globals.css for tokens, own scoped styles, own theme bootstrap) — no dependency on Layout/components.
 
@@ -86,7 +88,7 @@ Type roles: `--font-display` (Anton, always uppercase), `--font-sans` (Archivo),
 - LinkedIn: https://www.linkedin.com/in/erikrole/
 
 ## Resume data
-Typed data lives in `src/data/experience.ts` (`EXPERIENCE` array) and `src/data/site.ts` (`PROFILE`, `SOCIALS`). `current: true` shows the pulsing red "NOW" indicator; `type: "Freelance"` etc. shows a small pill under the dates.
+Typed data lives in `src/data/experience.ts` (`EXPERIENCE` array), `src/data/site.ts` (`PROFILE`, `SOCIALS`), and `src/data/work.ts` (`FEATURED_WORK`). `current: true` shows the pulsing red "NOW" indicator; `type: "Freelance"` etc. shows a small pill under the dates.
 
 ## Deployment
 Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
@@ -96,7 +98,7 @@ Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 - Light + dark must both look right when changing styles
 - Use CSS custom properties (`var(--ink)`, `var(--bg)`, etc.), not hardcoded colors
 - Keep page-level concerns (SEO, theme bootstrap, OG meta) in `Layout.astro`/`.astro` pages; content data in `src/data/`
-- Images go in `public/img/`, fonts in `public/fonts/`
+- Imported content images go in `src/assets/` so Astro can optimize and fingerprint them; fonts and browser-root assets remain in `public/`
 - Don't reintroduce Tailwind, shadcn, component libraries, or a client framework — the site is plain CSS + static Astro by design
 - Anton is display-only and always uppercase; body copy stays in Archivo
 
@@ -108,6 +110,9 @@ Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 
 ## Lessons learned
 - `img` width/height HTML attributes act as presentational hints — when overriding size in CSS with `aspect-ratio`, also set `height: auto` or the attribute height wins.
-- The Claude Code browser pane screenshots black frames when the page is scrolled (`scrollY > 0`). Workaround for visual verification: keep `scrollY` at 0 and `document.body.style.transform = translateY(-Npx)` to bring sections into view (disable `view()`-timeline animations while doing so).
+- The collaborative browser can intermittently fail screenshots when the page is scrolled. For below-the-fold visual checks, first try a fresh preview tab; if needed, keep `scrollY` at 0 and temporarily translate the page body.
+- At 320px, fixed-width header controls need `flex-shrink: 0` plus a narrow-screen spacing pass; otherwise Flexbox compresses the theme toggle and wraps the wordmark despite their declared sizes.
+- Keep the site static until a measured user need justifies server state. Use Cloudflare `_headers` for cache and security policy, and keep credited work as verified external links rather than inventing project attribution.
+- Reserve motion for the branded hero and direct interaction feedback; portfolio and resume content should not wait on scroll-driven reveals.
 
-*Last updated: 2026-07-16*
+*Last updated: 2026-08-10*

@@ -2,18 +2,28 @@
 import Layout from '@/layouts/Layout.astro';
 import TopBar from '@/components/TopBar.astro';
 import Hero from '@/components/Hero.astro';
+import SelectedWork from '@/components/SelectedWork.astro';
 import About from '@/components/About.astro';
 import Experience from '@/components/Experience.astro';
 import Footer from '@/components/Footer.astro';
 import { PROFILE } from '@/data/site';
+import portrait from '@/assets/erik-role-portrait.webp';
+import { getImage } from 'astro:assets';
 
 const siteUrl = "https://erikrole.com";
 const pageTitle = `${PROFILE.name} — ${PROFILE.title}`;
 const pageDescription =
     "Creative video producer leading visual storytelling for Wisconsin Men's Basketball.";
-const socialImage = "/img/20240731-240731MBB-3329-Role-Edit.webp";
+const socialImage = await getImage({
+    src: portrait,
+    width: 1200,
+    height: 630,
+    fit: 'cover',
+    position: 'center',
+    format: 'webp',
+});
 const canonicalUrl = `${siteUrl}/`;
-const socialImageUrl = `${siteUrl}${socialImage}`;
+const socialImageUrl = `${siteUrl}${socialImage.src}`;
 
 const personSchema = {
     "@context": "https://schema.org",
@@ -57,6 +67,7 @@ const personSchema = {
     <TopBar />
     <main>
         <Hero />
+        <SelectedWork />
         <About />
         <Experience />
     </main>

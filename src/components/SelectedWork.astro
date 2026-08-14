@@ -1,0 +1,31 @@
+---
+import { FEATURED_WORK } from '@/data/work';
+---
+
+<section class="section work" id="work" aria-labelledby="work-label">
+    <div class="section-head">
+        <h2 class="section-label" id="work-label">Selected Work</h2>
+        <span class="section-meta">Featured / Credited portfolio</span>
+    </div>
+    <a
+        class="work-feature"
+        href={FEATURED_WORK.href}
+        target="_blank"
+        rel="noopener me"
+        aria-label={`${FEATURED_WORK.linkLabel}: ${FEATURED_WORK.title}`}
+    >
+        <span class="work-number" aria-hidden="true">01</span>
+        <div class="work-copy">
+            <p class="work-eyebrow">{FEATURED_WORK.eyebrow}</p>
+            <h3 class="work-title">{FEATURED_WORK.title}</h3>
+            <p class="work-description">{FEATURED_WORK.description}</p>
+            <ul class="work-disciplines" aria-label="Disciplines">
+                {FEATURED_WORK.disciplines.map((discipline) => <li>{discipline}</li>)}
+            </ul>
+        </div>
+        <span class="work-action">
+            <span>{FEATURED_WORK.linkLabel}</span>
+            <span class="work-action-icon" aria-hidden="true">↗</span>
+        </span>
+    </a>
+</section>
