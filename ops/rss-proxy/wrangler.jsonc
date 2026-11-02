@@ -1,0 +1,9 @@
+{
+  "name": "rss-reader",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "rss.erikrole.com/*", "zone_id": "c58ffb24302475ca9aeab631f0eac57c" }],
+  "observability": { "enabled": true, "redact_query_string": true }
+}

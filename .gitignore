@@ -30,3 +30,4 @@ lerna-debug.log*
 .cache/
 .parcel-cache/
 **/.DS_Store
+.wrangler/
