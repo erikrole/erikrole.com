@@ -2,12 +2,25 @@ const PUBLIC_ORIGIN = 'https://rss.erikrole.com';
 const UPSTREAM_ORIGIN = 'https://reader.miniflux.app';
 const EDGE_COOKIES = /^(?:CF_Authorization|CF_AppSession|__cf_bm|cf_clearance)$/i;
 
+function isReaderApi(path) {
+  return /^\/(?:v1|fever)(?:\/|$)/.test(path)
+    || /^\/reader\/api\/0(?:\/|$)/.test(path)
+    || path === '/accounts/ClientLogin' || path === '/healthcheck';
+}
+
 export async function proxyReader(request, transport = fetch) {
   const url = new URL(request.url);
   if (url.origin !== PUBLIC_ORIGIN) return new Response('Not found', { status: 404 });
   const upstream = new URL(UPSTREAM_ORIGIN);
   upstream.pathname = url.pathname;
   upstream.search = url.search;
+  // WebAuthn and OAuth must run on the provider's registered browser origin.
+  // Native reader APIs keep the existing custom server URL and credentials.
+  if (!isReaderApi(url.pathname)) return new Response(null, {
+    status: ['GET', 'HEAD'].includes(request.method) ? 302 : 303,
+    headers: { location: upstream.href, 'cache-control': 'private, no-store',
+      'strict-transport-security': 'max-age=2592000' },
+  });
   const headers = new Headers(request.headers);
   for (const name of [...headers.keys()]) if (name.toLowerCase().startsWith('cf-access-')) headers.delete(name);
   for (const name of ['host', 'cf-access-jwt-assertion', 'cf-access-authenticated-user-email', 'cf-authorization', 'x-forwarded-host']) headers.delete(name);
@@ -30,7 +43,7 @@ export async function proxyReader(request, transport = fetch) {
   const location = output.get('location');
   if (location) {
     const target = new URL(location, UPSTREAM_ORIGIN);
-    if (target.origin === UPSTREAM_ORIGIN) output.set('location', PUBLIC_ORIGIN + target.pathname + target.search + target.hash);
+    if (target.origin === UPSTREAM_ORIGIN && isReaderApi(target.pathname)) output.set('location', PUBLIC_ORIGIN + target.pathname + target.search + target.hash);
   }
   const setCookies = response.headers.getSetCookie();
   output.delete('set-cookie');

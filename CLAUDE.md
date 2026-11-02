@@ -109,6 +109,7 @@ Cloudflare Pages via `wrangler.toml`. Build output is `dist/`.
 - After corrections, update this file with lessons learned
 
 ## Lessons learned
+- A custom Miniflux API hostname must send browser login to the provider's registered origin. WebAuthn relying-party IDs and OAuth callbacks cannot safely be repaired by rewriting their signed origin; preserve native client API routes separately.
 - `img` width/height HTML attributes act as presentational hints — when overriding size in CSS with `aspect-ratio`, also set `height: auto` or the attribute height wins.
 - The collaborative browser can intermittently fail screenshots when the page is scrolled. For below-the-fold visual checks, first try a fresh preview tab; if needed, keep `scrollY` at 0 and temporarily translate the page body.
 - At 320px, fixed-width header controls need `flex-shrink: 0` plus a narrow-screen spacing pass; otherwise Flexbox compresses the theme toggle and wraps the wordmark despite their declared sizes.
