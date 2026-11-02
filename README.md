@@ -1,6 +1,6 @@
 # Erik Role website
 
-Static Astro portfolio at https://erikrole.com. Run `npm ci` and `npm run build` to build the site. Existing typography, content, assets and portfolio deployment remain unchanged by the RSS hostname repair.
+Static Astro portfolio at https://erikrole.com. Run `npm ci` and `npm run build` to build the site. Existing typography, content and visual design remain unchanged by the RSS hostname repair.
 
 The portfolio uses its canonical custom domain with Workers.dev and version preview aliases disabled. A host-only 30-day HSTS header starts HTTPS persistence conservatively; it does not apply to unrelated subdomains.
 
