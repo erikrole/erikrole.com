@@ -1,0 +1,50 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout
+    title="Fetch for Chrome privacy policy — Erik Role"
+    description="Fetch for Chrome does not collect, store or send any data."
+    canonicalUrl="https://erikrole.com/fetch/privacy"
+>
+    <main class="policy">
+        <p class="eyebrow">Fetch for Chrome</p>
+        <h1>Privacy policy</h1>
+        <p class="updated">Updated November 6, 2026</p>
+
+        <p>
+            Fetch for Chrome does not collect, store or send any data. It has no accounts, no
+            analytics and no servers.
+        </p>
+        <p>
+            When you choose Save, the extension passes the address of the current page, or the
+            link you right-clicked, to the Fetch app on your own Mac using a <code>fetch://</code>
+            link. That hand-off stays on your computer. The extension does not send it anywhere
+            else.
+        </p>
+        <p>
+            The extension asks for two permissions. <strong>contextMenus</strong> adds the
+            right-click items. <strong>activeTab</strong> reads the current tab's address and title
+            when you click the toolbar button or press the shortcut.
+        </p>
+        <p>
+            What the Fetch app itself does is covered by its own settings and notes.
+        </p>
+        <p>
+            Questions: <a href="mailto:erikrole@gmail.com">erikrole@gmail.com</a>
+        </p>
+    </main>
+</Layout>
+
+<style>
+    .policy {
+        width: min(100% - 2 * var(--gutter), 42rem);
+        margin-inline: auto;
+        padding-block: 6rem 4rem;
+        line-height: 1.6;
+    }
+    .eyebrow { font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; opacity: .7; margin: 0 0 .5rem; }
+    h1 { font-family: var(--font-display, inherit); font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1; margin: 0 0 .5rem; }
+    .updated { opacity: .7; margin: 0 0 2rem; }
+    p { margin: 0 0 1rem; }
+</style>
