@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- 1200×630 share card. Render with scripts/og/render.sh → src/assets/og-card.png -->
+<html lang="en" class="dark" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../src/styles/globals.css">
+<style>
+  /* globals.css points fonts at /fonts; re-point them for file:// rendering. */
+  @font-face { font-family: "Anton"; font-weight: 400; font-display: block; src: url("../../public/fonts/anton-400.woff2") format("woff2"); }
+  @font-face { font-family: "Archivo"; font-weight: 400 700; font-display: block; src: url("../../public/fonts/archivo-var.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: block; src: url("../../public/fonts/ibm-plex-mono-400.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("../../public/fonts/ibm-plex-mono-500.woff2") format("woff2"); }
+
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    background: var(--bg);
+  }
+  .card-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0 0 72px;
+  }
+  .card .hero-eyebrow { margin-bottom: 18px; font-size: 15px; }
+  .card .hero-name { font-size: 188px; margin: 0 0 30px; }
+  .card .hero-name-text { transform: none; animation: none; }
+  .card .lower-third { clip-path: none; animation: none; }
+  .card .lt-primary { font-size: 19px; }
+  .card .lt-secondary { font-size: 14px; }
+  .card .lt-text { padding: 16px 26px 17px 20px; }
+  .card-photo { position: relative; margin: 0; }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
+  .card-photo::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--bg) 0%, oklch(from var(--bg) l c h / 0) 36%);
+  }
+  .card-url {
+    position: absolute; left: 72px; bottom: 30px;
+    font-family: var(--font-mono); font-size: 15px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .card-rule { position: absolute; z-index: 2; left: 0; top: 0; width: 100%; height: 8px; background: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-rule"></div>
+    <div class="card-main">
+      <p class="hero-eyebrow"><span class="hero-eyebrow-square"></span>Creative video producer — Madison, WI</p>
+      <h1 class="hero-name">
+        <span class="hero-name-line"><span class="hero-name-text">Erik</span></span>
+        <span class="hero-name-line"><span class="hero-name-text">Role</span></span>
+      </h1>
+      <div class="lower-third">
+        <span class="lt-bar"></span>
+        <div class="lt-text">
+          <span class="lt-primary">Assistant Director of Creative Video</span>
+          <span class="lt-secondary">Wisconsin Badgers</span>
+        </div>
+      </div>
+    </div>
+    <figure class="card-photo"><img src="../../src/assets/erik-role-portrait.webp" alt=""></figure>
+    <span class="card-url">erikrole.com</span>
+  </div>
+</body>
+</html>

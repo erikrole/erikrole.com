@@ -1,26 +1,37 @@
 ---
 import '@/styles/globals.css';
+import ThemeHead from '@/components/ThemeHead.astro';
 
 interface Props {
     title: string;
     description: string;
     /** Absolute URL of the social share image. Omit to skip og:image tags. */
     socialImageUrl?: string;
+    socialImageWidth?: number;
+    socialImageHeight?: number;
+    socialImageAlt?: string;
     canonicalUrl?: string;
     noindex?: boolean;
 }
 
-const { title, description, socialImageUrl, canonicalUrl, noindex = false } = Astro.props;
+const {
+    title,
+    description,
+    socialImageUrl,
+    socialImageWidth,
+    socialImageHeight,
+    socialImageAlt,
+    canonicalUrl,
+    noindex = false,
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#101114" media="(prefers-color-scheme: dark)">
+    <ThemeHead />
     <title>{title}</title>
     <meta name="description" content={description}>
     <meta name="author" content="Erik Role">
@@ -42,10 +53,14 @@ const { title, description, socialImageUrl, canonicalUrl, noindex = false } = As
     {socialImageUrl && (
         <>
             <meta property="og:image" content={socialImageUrl}>
+            {socialImageWidth && <meta property="og:image:width" content={String(socialImageWidth)}>}
+            {socialImageHeight && <meta property="og:image:height" content={String(socialImageHeight)}>}
+            {socialImageAlt && <meta property="og:image:alt" content={socialImageAlt}>}
             <meta name="twitter:card" content="summary_large_image">
             <meta name="twitter:title" content={title}>
             <meta name="twitter:description" content={description}>
             <meta name="twitter:image" content={socialImageUrl}>
+            {socialImageAlt && <meta name="twitter:image:alt" content={socialImageAlt}>}
             <meta name="twitter:site" content="@ErikRole">
             <meta name="twitter:creator" content="@ErikRole">
         </>
@@ -55,54 +70,116 @@ const { title, description, socialImageUrl, canonicalUrl, noindex = false } = As
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <link rel="preload" as="font" href="/fonts/anton-400.woff2" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="/fonts/archivo-var.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/ibm-plex-mono-400.woff2" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="/fonts/ibm-plex-mono-500.woff2" type="font/woff2" crossorigin>
-
-    <script is:inline>
-        (function () {
-            var stored = null;
-            try { stored = localStorage.getItem('theme'); } catch (e) {}
-            var dark = stored
-                ? stored === 'dark'
-                : window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.classList.toggle('dark', dark);
-            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-        })();
-    </script>
 </head>
 <body>
     <slot />
 
     <script>
-        const root = document.documentElement;
-
-        const applyTheme = (dark: boolean) => {
-            root.classList.toggle('dark', dark);
-            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        type ThemeApi = {
+            apply: (dark: boolean) => void;
+            stored: () => 'light' | 'dark' | null;
+            query: MediaQueryList;
         };
+        const root = document.documentElement;
+        const theme = (window as unknown as { __theme: ThemeApi }).__theme;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        // OS theme changes follow through unless the user has set an override.
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            let stored = null;
-            try { stored = localStorage.getItem('theme'); } catch {}
-            if (!stored) applyTheme(e.matches);
-        });
-
-        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        // ── Theme toggle ────────────────────────────────────────────────
+        const toggle = document.getElementById('theme-toggle');
+        toggle?.setAttribute('aria-pressed', String(root.classList.contains('dark')));
+        toggle?.addEventListener('click', () => {
             const dark = !root.classList.contains('dark');
-            applyTheme(dark);
-            try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
+            const swap = () => {
+                // Every token flips in one frame; per-element transitions would lag behind.
+                root.classList.add('theme-switching');
+                theme.apply(dark);
+                requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
+            };
+            if ('startViewTransition' in document && !reducedMotion.matches) {
+                document.startViewTransition(swap);
+            } else {
+                swap();
+            }
+            // Choosing what the OS already says returns to "follow system".
+            try {
+                if (dark === theme.query.matches) localStorage.removeItem('theme');
+                else localStorage.setItem('theme', dark ? 'dark' : 'light');
+            } catch {}
         });
 
+        // ── Topbar scrolled state ───────────────────────────────────────
         const topbar = document.getElementById('topbar');
         if (topbar) {
             const onScroll = () => topbar.classList.toggle('scrolled', window.scrollY > 8);
             onScroll();
             window.addEventListener('scroll', onScroll, { passive: true });
         }
+
+        // ── Current-section marker in the nav ───────────────────────────
+        const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.topnav a[href^="#"]'));
+        const sections = navLinks
+            .map((a) => document.querySelector<HTMLElement>(a.hash))
+            .filter((el): el is HTMLElement => el !== null);
+        if (sections.length && 'IntersectionObserver' in window) {
+            const setCurrent = (id: string | null) => {
+                for (const a of navLinks) {
+                    if (a.hash === `#${id}`) a.setAttribute('aria-current', 'location');
+                    else a.removeAttribute('aria-current');
+                }
+            };
+            const io = new IntersectionObserver(
+                (entries) => {
+                    for (const e of entries) {
+                        if (e.isIntersecting) setCurrent(e.target.id);
+                    }
+                    // Back in the hero: nothing is current.
+                    if (window.scrollY < sections[0].offsetTop - window.innerHeight / 2) setCurrent(null);
+                },
+                { rootMargin: '-45% 0px -50% 0px' },
+            );
+            sections.forEach((s) => io.observe(s));
+        }
+
+        // ── Copy email ──────────────────────────────────────────────────
+        const copyBtn = document.getElementById('copy-email') as HTMLButtonElement | null;
+        const copyStatus = document.getElementById('copy-status');
+        if (copyBtn && navigator.clipboard && window.isSecureContext) {
+            copyBtn.hidden = false;
+            const label = copyBtn.textContent?.trim() ?? 'Copy address';
+            let timer: number | undefined;
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(copyBtn.dataset.copy ?? '');
+                    copyBtn.textContent = 'Copied';
+                    copyBtn.dataset.state = 'done';
+                    if (copyStatus) copyStatus.textContent = 'Email address copied to clipboard';
+                } catch {
+                    if (copyStatus) copyStatus.textContent = 'Copy failed — select the address above';
+                }
+                window.clearTimeout(timer);
+                timer = window.setTimeout(() => {
+                    copyBtn.textContent = label;
+                    delete copyBtn.dataset.state;
+                    if (copyStatus) copyStatus.textContent = '';
+                }, 2400);
+            });
+        }
+
+        // ── Print résumé + live footer year ─────────────────────────────
+        const printBtn = document.getElementById('print-resume') as HTMLButtonElement | null;
+        if (printBtn) {
+            printBtn.hidden = false;
+            printBtn.addEventListener('click', () => window.print());
+        }
+        document.querySelectorAll('[data-year]').forEach((el) => {
+            el.textContent = String(new Date().getFullYear());
+        });
     </script>
 </body>
 </html>

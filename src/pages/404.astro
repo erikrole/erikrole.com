@@ -1,42 +1,27 @@
 ---
 import '@/styles/globals.css';
+import ThemeHead from '@/components/ThemeHead.astro';
+import { PROFILE } from '@/data/site';
 
 const pageTitle = "404 — Erik Role";
 const pageDescription = "Page not found";
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#101114" media="(prefers-color-scheme: dark)">
+    <ThemeHead />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription}>
     <meta name="robots" content="noindex">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/favicon.svg">
-
-    <script is:inline>
-        (function () {
-            var stored = null;
-            try { stored = localStorage.getItem('theme'); } catch (e) {}
-            var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            var apply = function (dark) {
-                document.documentElement.classList.toggle('dark', dark);
-                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-            };
-            apply(stored ? stored === 'dark' : darkQuery.matches);
-            darkQuery.addEventListener('change', function (e) {
-                var s = null;
-                try { s = localStorage.getItem('theme'); } catch (err) {}
-                if (!s) apply(e.matches);
-            });
-        })();
-    </script>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preload" as="font" href="/fonts/anton-400.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/archivo-var.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="/fonts/ibm-plex-mono-500.woff2" type="font/woff2" crossorigin>
 
     <style>
         .nf {
@@ -46,13 +31,29 @@ const pageDescription = "Page not found";
             justify-content: center;
             width: min(100% - 2 * var(--gutter), var(--shell));
             margin-inline: auto;
+            padding-block: 48px;
         }
+        /* SMPTE colour bars — the test card a dead feed falls back to */
+        .nf-bars {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            width: min(100%, 420px);
+            height: 18px;
+            margin-bottom: 28px;
+        }
+        .nf-bars span:nth-child(1) { background: var(--smpte-gray); }
+        .nf-bars span:nth-child(2) { background: var(--smpte-yellow); }
+        .nf-bars span:nth-child(3) { background: var(--smpte-cyan); }
+        .nf-bars span:nth-child(4) { background: var(--smpte-green); }
+        .nf-bars span:nth-child(5) { background: var(--smpte-magenta); }
+        .nf-bars span:nth-child(6) { background: var(--smpte-red); }
+        .nf-bars span:nth-child(7) { background: var(--smpte-blue); }
         .nf-eyebrow {
             display: flex;
             align-items: center;
             gap: 12px;
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: var(--fs-mono-m);
             font-weight: 500;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -73,69 +74,38 @@ const pageDescription = "Page not found";
             margin: 0 0 36px;
             color: var(--ink);
         }
-        .nf-third {
-            display: inline-flex;
-            align-items: stretch;
-            width: fit-content;
-            max-width: 100%;
-            background: var(--ink);
-            color: var(--bg);
-        }
-        .nf-third-bar { width: 6px; background: var(--lt-accent); flex-shrink: 0; }
-        .nf-third-text {
+        .nf-links {
+            list-style: none;
             display: flex;
-            flex-direction: column;
-            gap: 3px;
-            padding: 14px 22px 15px 18px;
-        }
-        .nf-third-primary {
-            font-family: var(--font-sans);
-            font-size: 15px;
-            font-weight: 650;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            line-height: 1.25;
-        }
-        .nf-third-secondary {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: oklch(from var(--bg) l c h / 0.62);
-        }
-        .nf-back {
-            display: inline-flex;
-            width: fit-content;
-            margin-top: 40px;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-3);
-            transition: color 200ms ease;
-        }
-        .nf-back:hover {
-            color: var(--ink);
-            text-decoration: underline;
-            text-decoration-color: var(--accent);
-            text-decoration-thickness: 1.5px;
-            text-underline-offset: 6px;
+            flex-wrap: wrap;
+            gap: 4px 28px;
+            margin: 32px 0 0;
+            padding: 0;
         }
     </style>
 </head>
 <body>
     <main class="nf">
+        <div class="nf-bars" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
         <p class="nf-eyebrow">Signal lost</p>
         <h1 class="nf-code">404</h1>
-        <div class="nf-third">
-            <span class="nf-third-bar" aria-hidden="true"></span>
-            <div class="nf-third-text">
-                <span class="nf-third-primary">This page is off the air</span>
-                <span class="nf-third-secondary">The link may be broken, or the page has moved</span>
+        <div class="lower-third">
+            <span class="lt-bar" aria-hidden="true"></span>
+            <div class="lt-text">
+                <span class="lt-primary">This page is off the air</span>
+                <span class="lt-secondary">The link may be broken, or the page has moved</span>
             </div>
         </div>
-        <a href="/" class="nf-back">← Back to erikrole.com</a>
+        <nav aria-label="Back on air">
+            <ul class="nf-links">
+                <li><a href="/" class="text-link">← erikrole.com</a></li>
+                <li><a href="/#work" class="text-link">Work</a></li>
+                <li><a href="/#experience" class="text-link">Experience</a></li>
+                <li><a href={`mailto:${PROFILE.email}`} class="text-link">Email</a></li>
+            </ul>
+        </nav>
     </main>
 </body>
 </html>

@@ -1,0 +1,23 @@
+---
+import { PROFILE } from '@/data/site';
+---
+
+<section class="section contact" id="contact" aria-labelledby="contact-label">
+    <div class="section-head">
+        <h2 class="section-label" id="contact-label">Contact</h2>
+        <span class="section-meta">Email is the direct line</span>
+    </div>
+    <div class="contact-slate">
+        <a class="contact-email" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+        <div class="contact-actions">
+            <a class="contact-btn contact-btn--primary" href={`mailto:${PROFILE.email}`}>
+                <span class="contact-btn-bar" aria-hidden="true"></span>
+                Send an email
+            </a>
+            <button type="button" class="contact-btn" id="copy-email" data-copy={PROFILE.email} hidden>
+                Copy address
+            </button>
+            <span class="contact-status" id="copy-status" role="status" aria-live="polite"></span>
+        </div>
+    </div>
+</section>
