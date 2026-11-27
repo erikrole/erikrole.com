@@ -68,4 +68,7 @@ export const EXPERIENCE: Role[] = [
   },
 ]
 
-export const EXPERIENCE_SPAN = `${Math.min(...EXPERIENCE.map((r) => Number(r.start)))} → Present`
+/** First year on the rundown; drives the experience span and the hero season counter. */
+export const FIRST_SEASON = Math.min(...EXPERIENCE.map((r) => Number(r.start)))
+
+export const EXPERIENCE_SPAN = `${FIRST_SEASON} → Present`

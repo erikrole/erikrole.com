@@ -5,32 +5,34 @@ import Hero from '@/components/Hero.astro';
 import SelectedWork from '@/components/SelectedWork.astro';
 import About from '@/components/About.astro';
 import Experience from '@/components/Experience.astro';
+import Contact from '@/components/Contact.astro';
 import Footer from '@/components/Footer.astro';
-import { PROFILE } from '@/data/site';
+import { PROFILE, SOCIALS } from '@/data/site';
+import { WORK } from '@/data/work';
 import portrait from '@/assets/erik-role-portrait.webp';
+import ogCard from '@/assets/og-card.png';
 import { getImage } from 'astro:assets';
 
 const siteUrl = "https://erikrole.com";
 const pageTitle = `${PROFILE.name} — ${PROFILE.title}`;
 const pageDescription =
     "Creative video producer leading visual storytelling for Wisconsin Men's Basketball.";
-const socialImage = await getImage({
-    src: portrait,
-    width: 1200,
-    height: 630,
-    fit: 'cover',
-    position: 'center',
-    format: 'webp',
-});
+// Designed share card (regenerate with scripts/og/render.sh). JPG unfurls everywhere.
+const socialImage = await getImage({ src: ogCard, width: 1200, height: 630, format: 'jpg', quality: 88 });
+// Schema.org Person image stays the portrait itself.
+const personImage = await getImage({ src: portrait, width: 800, format: 'jpg', quality: 85 });
 const canonicalUrl = `${siteUrl}/`;
 const socialImageUrl = `${siteUrl}${socialImage.src}`;
+const socialImageAlt = `${PROFILE.name} — ${PROFILE.title}, ${PROFILE.org}`;
 
 const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: PROFILE.name,
     url: canonicalUrl,
-    image: socialImageUrl,
+    image: `${siteUrl}${personImage.src}`,
+    description: PROFILE.bio,
+    email: PROFILE.email,
     jobTitle: PROFILE.title,
     worksFor: {
         "@type": "SportsOrganization",
@@ -49,9 +51,8 @@ const personSchema = {
         "Brand Strategy",
     ],
     sameAs: [
-        "https://www.linkedin.com/in/erikrole/",
-        "https://www.instagram.com/erikrole/",
-        "https://x.com/ErikRole",
+        ...SOCIALS.filter((s) => s.external).map((s) => s.href),
+        ...WORK.map((w) => w.href),
     ],
 };
 ---
@@ -61,15 +62,19 @@ const personSchema = {
     description={pageDescription}
     canonicalUrl={canonicalUrl}
     socialImageUrl={socialImageUrl}
+    socialImageWidth={1200}
+    socialImageHeight={630}
+    socialImageAlt={socialImageAlt}
 >
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
 
     <TopBar />
-    <main>
+    <main id="main" tabindex="-1">
         <Hero />
         <SelectedWork />
         <About />
         <Experience />
+        <Contact />
     </main>
     <Footer />
 </Layout>

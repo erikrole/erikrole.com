@@ -1,5 +1,10 @@
 ---
-import { FEATURED_WORK } from '@/data/work';
+import { WORK } from '@/data/work';
+
+const [featured, ...rest] = WORK;
+// Numbering only means something once there is more than one item on the rundown.
+const numbered = rest.length > 0;
+const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
 <section class="section work" id="work" aria-labelledby="work-label">
@@ -7,25 +12,38 @@ import { FEATURED_WORK } from '@/data/work';
         <h2 class="section-label" id="work-label">Selected Work</h2>
         <span class="section-meta">Featured / Credited portfolio</span>
     </div>
-    <a
-        class="work-feature"
-        href={FEATURED_WORK.href}
-        target="_blank"
-        rel="noopener me"
-        aria-label={`${FEATURED_WORK.linkLabel}: ${FEATURED_WORK.title}`}
-    >
-        <span class="work-number" aria-hidden="true">01</span>
+    <article class:list={['work-feature', { 'is-numbered': numbered }]}>
+        {numbered && <span class="work-number" aria-hidden="true">{num(0)}</span>}
         <div class="work-copy">
-            <p class="work-eyebrow">{FEATURED_WORK.eyebrow}</p>
-            <h3 class="work-title">{FEATURED_WORK.title}</h3>
-            <p class="work-description">{FEATURED_WORK.description}</p>
+            <p class="work-eyebrow">{featured.eyebrow}</p>
+            <h3 class="work-title">
+                <a class="work-link" href={featured.href} target="_blank" rel="noopener me">
+                    {featured.title}<span class="sr-only"> — {featured.linkLabel} (opens in new tab)</span>
+                </a>
+            </h3>
+            <p class="work-description">{featured.description}</p>
             <ul class="work-disciplines" aria-label="Disciplines">
-                {FEATURED_WORK.disciplines.map((discipline) => <li>{discipline}</li>)}
+                {featured.disciplines.map((discipline) => <li>{discipline}</li>)}
             </ul>
         </div>
-        <span class="work-action">
-            <span>{FEATURED_WORK.linkLabel}</span>
-            <span class="work-action-icon" aria-hidden="true">↗</span>
+        <span class="work-action" aria-hidden="true">
+            <span>{featured.linkLabel}</span>
+            <span class="work-action-icon">↗</span>
         </span>
-    </a>
+    </article>
+    {rest.length > 0 && (
+        <ol class="work-rows" start="2">
+            {rest.map((item, i) => (
+                <li class="work-row">
+                    <a class="work-row-link" href={item.href} target="_blank" rel="noopener me">
+                        <span class="work-row-num" aria-hidden="true">{num(i + 1)}</span>
+                        <span class="work-row-title">{item.title}</span>
+                        <span class="work-row-meta">{item.eyebrow}</span>
+                        <span class="work-row-icon" aria-hidden="true">↗</span>
+                        <span class="sr-only"> (opens in new tab)</span>
+                    </a>
+                </li>
+            ))}
+        </ol>
+    )}
 </section>

@@ -5,7 +5,10 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="foot">
-    <span>© {year} Erik Role</span>
+    <span>© <span data-year>{year}</span> Erik Role</span>
     <span class="foot-coords">{PROFILE.coordinates}</span>
-    <span>{PROFILE.location}</span>
+    <span class="foot-end">
+        <span>{PROFILE.location}</span>
+        <button type="button" class="foot-print" id="print-resume" hidden>Print résumé</button>
+    </span>
 </footer>

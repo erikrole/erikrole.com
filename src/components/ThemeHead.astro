@@ -1,0 +1,47 @@
+---
+/**
+ * Shared <head> theme plumbing for every page: color-scheme + theme-color metas
+ * and the pre-paint bootstrap. Exposes window.__theme for the toggle script.
+ * Theme-color hexes are the sRGB values of --bg in each theme (globals.css).
+ */
+---
+
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f7f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#07080b" media="(prefers-color-scheme: dark)">
+<script is:inline>
+    (function () {
+        var root = document.documentElement;
+        var query = window.matchMedia('(prefers-color-scheme: dark)');
+        var COLORS = { light: '#f5f7f9', dark: '#07080b' };
+
+        // Only 'light' | 'dark' count as an override; anything else means "follow the OS".
+        function stored() {
+            try {
+                var s = localStorage.getItem('theme');
+                return s === 'dark' || s === 'light' ? s : null;
+            } catch (e) { return null; }
+        }
+
+        function apply(dark) {
+            root.classList.toggle('dark', dark);
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+            var metas = document.querySelectorAll('meta[name="theme-color"]');
+            for (var i = 0; i < metas.length; i++) {
+                metas[i].setAttribute('content', dark ? COLORS.dark : COLORS.light);
+            }
+            var toggle = document.getElementById('theme-toggle');
+            if (toggle) toggle.setAttribute('aria-pressed', String(dark));
+        }
+
+        window.__theme = { apply: apply, stored: stored, query: query };
+
+        var s = stored();
+        apply(s ? s === 'dark' : query.matches);
+
+        // OS theme changes follow through unless the user has set an override.
+        query.addEventListener('change', function (e) {
+            if (!stored()) apply(e.matches);
+        });
+    })();
+</script>

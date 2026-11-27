@@ -36,6 +36,12 @@ import portrait from '@/assets/erik-role-portrait.webp';
                         >
                             <Icon name={s.id} size={15} />
                             <span>{s.label}</span>
+                            {s.external && (
+                                <>
+                                    <span class="social-ext" aria-hidden="true">↗</span>
+                                    <span class="sr-only">(opens in new tab)</span>
+                                </>
+                            )}
                         </a>
                     </li>
                 ))}

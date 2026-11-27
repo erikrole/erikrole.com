@@ -1,6 +1,6 @@
 ---
 import { PROFILE } from '@/data/site';
-import { EXPERIENCE } from '@/data/experience';
+import { EXPERIENCE, FIRST_SEASON } from '@/data/experience';
 
 const [firstName, lastName] = PROFILE.name.split(' ');
 
@@ -17,6 +17,9 @@ for (const role of EXPERIENCE) {
     if (role.current) c.current = true;
     else c.end = Math.max(c.end, Number(role.end));
 }
+
+// Build-time scoreboard fact: seasons on the job, counting the first one.
+const season = String(new Date().getFullYear() - FIRST_SEASON + 1).padStart(2, '0');
 ---
 
 <section class="hero" id="top" aria-label="Introduction">
@@ -36,7 +39,7 @@ for (const role of EXPERIENCE) {
                 <span class="lt-secondary">{PROFILE.org}</span>
             </div>
             <span class="lt-live">
-                <span class="lt-live-dot" aria-hidden="true"></span>
+                <span class="live-dot" aria-hidden="true"></span>
                 Now
             </span>
         </div>
@@ -52,5 +55,8 @@ for (const role of EXPERIENCE) {
             ))}
         </ul>
     </aside>
-    <p class="hero-scroll reveal" style="--d: 900ms" aria-hidden="true">Scroll ↓</p>
+    <div class="hero-foot">
+        <a class="hero-scroll reveal" href="#work" style="--d: 900ms">Scroll <span aria-hidden="true">↓</span></a>
+        <p class="hero-season reveal" style="--d: 900ms">Season {season} — Since {FIRST_SEASON}</p>
+    </div>
 </section>
